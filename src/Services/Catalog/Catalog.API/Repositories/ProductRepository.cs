@@ -1,6 +1,5 @@
 ﻿using Catalog.API.Data;
 using Catalog.API.Entities;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Catalog.API.Repositories
@@ -37,7 +36,7 @@ namespace Catalog.API.Repositories
         public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryName)
         {
             FilterDefinition<Product> filter = Builders<Product>.Filter
-                .Eq(p => p.Category, categoryName);
+                    .Where(p => p.Category.Equals(categoryName, StringComparison.OrdinalIgnoreCase));
             return await _context
                 .Products
                 .Find(filter)

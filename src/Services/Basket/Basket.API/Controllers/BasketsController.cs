@@ -1,6 +1,5 @@
 ﻿using Basket.API.Entities;
 using Basket.API.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.API.Controllers

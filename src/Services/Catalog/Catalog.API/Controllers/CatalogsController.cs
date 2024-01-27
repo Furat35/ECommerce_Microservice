@@ -1,9 +1,6 @@
 ﻿using Catalog.API.Entities;
 using Catalog.API.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Catalog.API.Controllers
 {
@@ -52,7 +49,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IEnumerable<Product>))]
         public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
             await _productRepository.CreateProductAsync(product);

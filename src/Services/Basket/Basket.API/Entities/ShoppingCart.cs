@@ -1,24 +1,22 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Basket.API.Entities
+﻿namespace Basket.API.Entities
 {
     public class ShoppingCart
     {
         public ShoppingCart()
         {
-        
+
         }
 
         public ShoppingCart(string username)
         {
-            
+
         }
 
-        public string  Username { get; set; }
+        public string Username { get; set; }
 
         public List<ShoppingCartItem> Items { get; set; } = new List<ShoppingCartItem>();
 
-        public decimal TotalPrice 
+        public decimal TotalPrice
         {
             get
             {
@@ -28,7 +26,7 @@ namespace Basket.API.Entities
                     totalPrice += item.Price * item.Quantity;
                 }
                 return totalPrice;
-            } 
+            }
         }
     }
 }

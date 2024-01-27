@@ -1,8 +1,6 @@
 ﻿using Basket.API.Entities;
 using Microsoft.Extensions.Caching.Distributed;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Basket.API.Repositories
 {
@@ -17,12 +15,12 @@ namespace Basket.API.Repositories
 
         public async Task DeleteBasket(string username)
         {
-            await _redisCache.RemoveAsync(username);
+            await _redisCache.RemoveAsync(username.ToUpperInvariant());
         }
 
         public async Task<ShoppingCart> GetBasket(string username)
         {
-            var basket = await _redisCache.GetStringAsync(username);
+            var basket = await _redisCache.GetStringAsync(username.ToUpperInvariant());
             if (string.IsNullOrEmpty(basket))
                 return null;
             return JsonSerializer.Deserialize<ShoppingCart>(basket);
@@ -30,8 +28,8 @@ namespace Basket.API.Repositories
 
         public async Task<ShoppingCart> UpdateBasket(ShoppingCart basket)
         {
-            await _redisCache.SetStringAsync(basket.Username, JsonSerializer.Serialize(basket));
-            return await GetBasket(basket.Username);    
+            await _redisCache.SetStringAsync(basket.Username.ToUpperInvariant(), JsonSerializer.Serialize(basket));
+            return await GetBasket(basket.Username);
         }
     }
 }
