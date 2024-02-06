@@ -1,0 +1,5 @@
+- Catalog.API => 5000
+- Basket.API => 5001
+- Discount.API => 5002
+- Discount.Grpc => 5003
+- Order.API => 5004

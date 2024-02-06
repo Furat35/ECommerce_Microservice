@@ -19,7 +19,7 @@ namespace Discount.API.Repositories
         {
             using var connection = new NpgsqlConnection(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
             var affected = await connection.ExecuteAsync("INSERT INTO COUPON (ProductName, Description, Amount) VALUES (@ProductName, @Description, @Amount)", new { ProductName = coupon.ProductName, Description = coupon.Description, Amount = Math.Round(coupon.Amount, 2) });
-            var x = new  global::Discount.API.Repositories.DiscountRepository(_configuration);
+            var x = new global::Discount.API.Repositories.DiscountRepository(_configuration);
             return affected == 0
                 ? false
                 : true;
