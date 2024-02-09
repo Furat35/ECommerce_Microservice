@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+  # DATABASES
   catalogdb:
     image: mongo
 
@@ -13,6 +14,10 @@ services:
   orderdb:
     image: mcr.microsoft.com/mssql/server
 
+  rabbitmq:
+    image: rabbitmq:3.12.12-management-alpine
+
+  # API'S    
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
     build:
