@@ -7,7 +7,10 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt =>
+{
+    opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = false;
+});
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
@@ -16,6 +19,9 @@ builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<DiscountGrpcService>();
 var x = builder.Configuration["GrpcSettings:DiscountUrl"];
 var y = builder.Configuration["EventBusSettings:HostAddress"];
+Console.WriteLine(x);
+Console.WriteLine(y);
+
 builder.Services.AddMassTransit(config =>
 {
     config.UsingRabbitMq((ctx, cfg) =>

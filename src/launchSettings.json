@@ -8,7 +8,9 @@
         "basket.api": "StartDebugging",
         "discount.api": "StartDebugging",
         "discount.grpc": "StartDebugging",
-        "ordering.api": "StartDebugging"
+        "ordering.api": "StartDebugging",
+        "orderapigw": "StartDebugging",
+        "shopping.aggregator": "StartDebugging"
       }
     }
   }

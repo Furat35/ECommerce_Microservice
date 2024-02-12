@@ -30,11 +30,11 @@ services:
       context: .
       dockerfile: Services/Basket/Basket.API/Dockerfile
 
-  discount.api:
-    image: ${DOCKER_REGISTRY-}discountapi
-    build:
-      context: .
-      dockerfile: services/Discount/Discount.API/Dockerfile
+  # discount.api:
+  #   image: ${DOCKER_REGISTRY-}discountapi
+  #   build:
+  #     context: .
+  #     dockerfile: services/Discount/Discount.API/Dockerfile
 
   discount.grpc:
     image: ${DOCKER_REGISTRY-}discountgrpc
@@ -48,9 +48,23 @@ services:
       context: .
       dockerfile: Services/Ordering/Ordering.API/Dockerfile
 
+  orderapigw:
+    image: ${DOCKER_REGISTRY-}orderapigw
+    build:
+      context: .
+      dockerfile: ApiGateways/OrderApiGw/Dockerfile
+
+  shopping.aggregator:
+    image: ${DOCKER_REGISTRY-}shoppingaggregator
+    build:
+      context: .
+      dockerfile: ApiGateways/Shopping.Aggregator/Dockerfile
+
 volumes:
   mongo_data:
   postgres_data:
+
+
 
 
 

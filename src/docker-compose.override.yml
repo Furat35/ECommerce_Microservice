@@ -35,7 +35,7 @@ services:
         ACCEPT_EULA: "Y"
     restart: always
     ports:
-        - "1433:1433" 
+        - "10433:1433" 
      
   rabbitmq:
     container_name: rabbitmq
@@ -63,27 +63,28 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
-      - "GrpcSettings:DiscountUrl=http://discount.grpc:5003"
+      - "GrpcSettings:DiscountUrl=http://discount.grpc:8080"
     depends_on:
       - basketdb
       - rabbitmq
+      - discount.grpc 
     ports:
       - "5001:8080"
 
-  discount.api:
-    container_name: discount.api
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User ID=admin;Password=admin123;"
-    depends_on:
-      - discountdb
-    ports:
-      - "5002:8080"
+  # discount.api:
+  #   container_name: discount.api
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_HTTP_PORTS=8080
+  #     - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User ID=admin;Password=admin123;"
+  #   depends_on:
+  #     - discountdb
+  #   ports:
+  #     - "5002:8080"
 
 
   discount.grpc:
-    container_name: discount.grpc
+    container_name: discountgrpc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -98,11 +99,41 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
+      - "ConnectionStrings:OrderingConnectionString=Server=orderdb,1433;Database=OrderDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     depends_on: 
       - orderdb
       - rabbitmq 
     ports:
       - "5004:8080"
+
+
+  orderapigw:
+    container_name: orderapigw
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - catalog.api
+      - basket.api
+      - discount.grpc 
+      - ordering.api 
+    ports:
+      - "5010:8080"
+
+
+  shopping.aggregator:
+    container_name: shopping.aggregator
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ApiSettings:CatalogUrl=http://catalog.api:8080"
+      - "ApiSettings:BasketUrl=http://basket.api:8080"
+      - "ApiSettings:OrderingUrl=http://ordering.api:8080"
+    depends_on:
+      - catalog.api
+      - basket.api
+      - ordering.api
+    ports:
+      - "5005:8080"
 

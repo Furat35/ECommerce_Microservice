@@ -2,6 +2,7 @@
 using Basket.API.Entities;
 using Basket.API.GrpcServices;
 using Basket.API.Repositories;
+using Discount.Grpc.Protos;
 using EventBus.Message.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,7 @@ namespace Basket.API.Controllers
         {
             foreach (var item in basket.Items)
             {
+
                 var coupon = await _discountGrpcService.GetDiscount(item.ProductName);
                 item.Price -= coupon.Amount;
             }

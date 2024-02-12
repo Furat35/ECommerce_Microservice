@@ -3,3 +3,7 @@
 - Discount.API => 10002
 - Discount.Grpc => 10003
 - Order.API => 10004
+- Shopping.Aggregator => 10005
+
+// Gateway
+- OrderApiGw => 10010

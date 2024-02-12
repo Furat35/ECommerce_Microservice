@@ -15,6 +15,7 @@ namespace Discount.Grpc.Extensions
             try
             {
                 logger.LogInformation("Migrating postgresql database.");
+                var xccc = configuration.GetValue<string>("DatabaseSettings:ConnectionString");
                 using var connection = new NpgsqlConnection(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
                 connection.Open();
                 using var command = new NpgsqlCommand
