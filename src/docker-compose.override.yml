@@ -137,3 +137,21 @@ services:
     ports:
       - "5005:8080"
 
+
+  aspnetrunbasics:
+    container_name: aspnetrunbasics
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ApiSettings:GatewayAddress=http://orderapigw:8080"
+    depends_on:
+      - orderapigw
+      - catalog.api
+      - basket.api
+      - discount.grpc 
+      - ordering.api
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    ports:
+      - "5006:8080"

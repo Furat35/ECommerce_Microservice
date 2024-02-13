@@ -7,3 +7,6 @@
 
 // Gateway
 - OrderApiGw => 10010
+
+//UI
+- AspnetRunBasics => 10006
