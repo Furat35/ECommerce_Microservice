@@ -19,7 +19,7 @@ namespace Ordering.Infrastructure.Persistence
         {
             return new List<Order>()
             {
-                new Order(){UserName = "firat", TotalPrice = 123, FirstName = "firat", LastName = "ortac", EmailAddress = "firat@gmail.com", AddressLine = "karsiyaka", Country = "türkiye", State="izmir", ZipCode= "35", CardName ="home", CardNumber="444449999933311111333", Expiration = DateTime.Now.ToString(), CVV = "123", PaymentMethod = 0, LastModifiedBy = "fior"}
+                new Order(){UserName= "firat", UserId = Guid.NewGuid(),FirstName = "firat", LastName = "ortac", TotalPrice = 123, EmailAddress = "firat@gmail.com", Address = new Address{ AddressLine = "karsiyaka", Country = "türkiye", State="izmir", ZipCode= "35"}, PaymentCard = new PaymentCard{CardNumber="444449999933311111333", Expiration = DateTime.Now.ToString(), CVV = "123", PaymentMethod = 0, LastModifiedBy = "fior", CardName ="home" }}
             };
         }
     }

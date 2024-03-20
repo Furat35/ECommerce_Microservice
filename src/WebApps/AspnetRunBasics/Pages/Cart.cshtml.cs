@@ -27,7 +27,7 @@ namespace AspnetRunBasics
             return Page();
         }
 
-      
+
         public async Task<IActionResult> OnPostRemoveToCartAsync(string productId)
         {
             var userName = "firat";

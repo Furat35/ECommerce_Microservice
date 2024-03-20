@@ -4,6 +4,7 @@ using Ordering.Application.Features.Orders.Commands.CheckoutOrder;
 using Ordering.Application.Features.Orders.Commands.DeleteOrder;
 using Ordering.Application.Features.Orders.Commands.UpdateOrder;
 using Ordering.Application.Features.Orders.Queries.GetOrdersList;
+using Ordering.Application.Models.Dtos.Orders;
 
 namespace Ordering.API.Controllers
 {
@@ -32,8 +33,8 @@ namespace Ordering.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckoutOrder([FromBody] CheckoutOrderCommand command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            var orderId = await _mediator.Send(command);
+            return Ok(new { OrderId = orderId });
         }
 
         [HttpPut(Name = "UpdateOrder")]
@@ -50,9 +51,9 @@ namespace Ordering.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteOrder(int id)
+        public async Task<IActionResult> DeleteOrder(string id)
         {
-            var command = new DeleteOrderCommand { Id = id };
+            var command = new DeleteOrderCommand { Id = Guid.Parse(id) };
             await _mediator.Send(command);
             return NoContent();
         }

@@ -20,7 +20,7 @@ namespace Ordering.Application.Features.Orders.Commands.UpdateOrder
 
         public async Task Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
-            var orderToUpdate = await _orderRepository.GetByIdAsync(request.Id);
+            var orderToUpdate = await _orderRepository.GetByIdAsync(request.Id, includes: [_ => _.Address, _ => _.PaymentCard]);
             if (orderToUpdate is null)
             {
                 _logger.LogError("Order does not exist in database.");

@@ -17,10 +17,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<DiscountGrpcService>();
-var x = builder.Configuration["GrpcSettings:DiscountUrl"];
-var y = builder.Configuration["EventBusSettings:HostAddress"];
-Console.WriteLine(x);
-Console.WriteLine(y);
 
 builder.Services.AddMassTransit(config =>
 {

@@ -3,6 +3,7 @@ using Ordering.Application.Contracts.Persistence;
 using Ordering.Domain.Common;
 using Ordering.Infrastructure.Persistence;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Ordering.Infrastructure.Repositories
 {
@@ -33,9 +34,15 @@ namespace Ordering.Infrastructure.Repositories
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, List<Expression<Func<T, object>>> includes = null)
         {
-            return await _dbContext.Set<T>().Where(predicate).ToListAsync();
+            IQueryable<T> query = _dbContext.Set<T>();
+            if (includes != null)
+            {
+                foreach (var includeProperty in includes)
+                    query = query.Include(includeProperty);
+            }
+            return await query.Where(predicate).ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeString = null, bool disableTracking = true)
@@ -63,7 +70,10 @@ namespace Ordering.Infrastructure.Repositories
                 query = query.AsNoTracking();
 
             if (includes != null)
-                query = includes.Aggregate(query, (current, include) => current.Include(include));
+            {
+                foreach (var includeProperty in includes)
+                    query = query.Include(includeProperty);
+            }
 
             if (predicate != null)
                 query = query.Where(predicate);
@@ -74,9 +84,16 @@ namespace Ordering.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public virtual async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(Guid id, List<Expression<Func<T, object>>> includes = null)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            IQueryable<T> query = _dbContext.Set<T>();
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                    query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(_ => _.Id == id);
         }
 
         public async Task UpdateAsync(T entity)
