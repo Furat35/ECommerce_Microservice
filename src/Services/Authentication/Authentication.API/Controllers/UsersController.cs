@@ -1,16 +1,15 @@
-﻿using Authentication.API.Helpers;
-using Authentication.API.Models.Dtos.Addresses;
+﻿using Authentication.API.Models.Dtos.Addresses;
 using Authentication.API.Models.Dtos.PaymentCards;
 using Authentication.API.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Helpers;
 
 namespace Authentication.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
     [ApiController]
-    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;

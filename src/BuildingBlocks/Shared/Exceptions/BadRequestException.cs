@@ -1,4 +1,4 @@
-﻿namespace Authentication.API.Exceptions
+﻿namespace Shared.Exceptions
 {
     public class BadRequestException : Exception
     {

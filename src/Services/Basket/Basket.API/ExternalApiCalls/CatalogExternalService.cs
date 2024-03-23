@@ -1,0 +1,31 @@
+﻿using Basket.API.ExternalApiCalls.Contracts;
+using Basket.API.Models.ExternalApiResponseDtos;
+
+namespace Basket.API.ExternalApiCalls
+{
+    public class CatalogExternalService : ICatalogExternalService
+    {
+        private readonly HttpClient _httpClient;
+        public CatalogExternalService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient("Catalog.Api");
+
+        }
+
+        public async Task<Product> GetProductById(string productId)
+        {
+            Product product = null;
+            try
+            {
+                product = await _httpClient.GetFromJsonAsync<Product>($"api/v1/catalogs/{productId}");
+            }
+            catch (Exception ex)
+            {
+                //throw new HttpRequestException(ex.Message);
+                //loging can be implemented
+            }
+
+            return product;
+        }
+    }
+}

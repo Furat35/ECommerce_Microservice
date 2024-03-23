@@ -5,11 +5,11 @@ namespace Ordering.Application.Features.Orders.Queries.GetOrdersList
 {
     public class GetOrdersListQuery : IRequest<List<OrderListDto>>
     {
-        public string Username { get; set; }
+        public string UserId { get; set; }
 
-        public GetOrdersListQuery(string username)
+        public GetOrdersListQuery(string userId)
         {
-            Username = username;
+            UserId = userId;
         }
     }
 }

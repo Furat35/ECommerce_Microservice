@@ -25,5 +25,28 @@ namespace Ordering.API.EventBusConsumer
             var result = await _mediator.Send(command);
             _logger.LogInformation($"BasketCheckoutEvent consumed successfully. Created Order Id : {result}");
         }
+
+        //private bool CheckIfUserIsAuthenticated(Headers headers)
+        //{
+        //    if (!headers.TryGetHeader("Authorization", out var tokenObj) || !(tokenObj is string token))
+        //    {
+        //        _logger.LogError("Authorization token is missing from the message.");
+        //        return false;
+        //    }
+        //    token = token.Replace("Bearer ", "");
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    var validationParameters = new TokenValidationParameters
+        //    {
+        //        ValidateIssuer = true,
+        //        ValidateAudience = true,
+        //        ValidateLifetime = true,
+        //        ValidateIssuerSigningKey = true,
+        //        ValidIssuer = _configuration["JWTAuth:ValidIssuerURL"],
+        //        ValidAudience = _configuration["JWTAuth:ValidAudienceURL"],
+        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"])),
+        //    };
+        //    var validationResult = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+        //    return validationResult.Identities.Any(_ => _.IsAuthenticated);
+        //}
     }
 }

@@ -1,34 +1,10 @@
-using Basket.API.GrpcServices;
-using Basket.API.Repositories;
-using Discount.Grpc.Protos;
-using MassTransit;
-using System.Reflection;
+using Basket.API.Extensions;
+using Shared.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers(opt =>
-{
-    opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = false;
-});
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
-});
-builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-builder.Services.AddScoped<DiscountGrpcService>();
-
-builder.Services.AddMassTransit(config =>
-{
-    config.UsingRabbitMq((ctx, cfg) =>
-    {
-        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
-    });
-});
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(o => o.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]));
+builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -38,6 +14,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCustomExceptionHandling();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

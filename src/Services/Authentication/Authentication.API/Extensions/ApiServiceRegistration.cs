@@ -26,15 +26,14 @@ namespace Authentication.API.Extensions
             services.AddScoped<ITokenService, JwtService>();
             services.AddHttpContextAccessor();
 
-            // Automapper
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            // Fluentvalidation
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-            // EntityFramework
             services.AddDbContext<AuthenticationContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("AuthenticationConnectionString"));
+                options.UseSqlServer(configuration.GetConnectionString("AuthenticationConnectionString"), opt =>
+                {
+                    opt.EnableRetryOnFailure();
+                });
             });
 
             // Authentication
@@ -43,21 +42,21 @@ namespace Authentication.API.Extensions
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                   .AddJwtBearer(options =>
-                   {
-                       options.TokenValidationParameters = new TokenValidationParameters
-                       {
-                           ValidateIssuer = true,
-                           ValidateAudience = true,
-                           ValidateLifetime = true,
-                           ValidateIssuerSigningKey = true,
-                           ValidIssuer = configuration["JWTAuth:ValidIssuerURL"],
-                           ValidAudience = configuration["JWTAuth:ValidAudienceURL"],
-                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"])),
-                       };
-                   });
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["JWTAuth:ValidIssuerURL"],
+                        ValidAudience = configuration["JWTAuth:ValidAudienceURL"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"])),
+                    };
+                });
 
-            
+
         }
     }
 }

@@ -11,9 +11,9 @@ namespace Basket.API.GrpcServices
             _discountProtoService = discountProtoService;
         }
 
-        public async Task<CouponModel> GetDiscount(string productName)
+        public async Task<CouponModel> GetDiscount(string productId)
         {
-            var discountRequest = new GetDiscountRequest { ProductName = productName };
+            var discountRequest = new GetDiscountRequest { ProductId = productId };
             return await _discountProtoService.GetDiscountAsync(discountRequest);
         }
     }

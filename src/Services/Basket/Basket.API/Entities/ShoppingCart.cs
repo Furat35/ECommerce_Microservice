@@ -7,13 +7,6 @@
 
         }
 
-        public ShoppingCart(string username)
-        {
-
-        }
-
-        public string Username { get; set; }
-
         public List<ShoppingCartItem> Items { get; set; } = new List<ShoppingCartItem>();
 
         public decimal TotalPrice

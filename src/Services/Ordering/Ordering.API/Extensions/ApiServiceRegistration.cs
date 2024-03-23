@@ -1,7 +1,10 @@
 ﻿using EventBus.Message.Common;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Ordering.API.EventBusConsumer;
 using System.Reflection;
+using System.Text;
 
 namespace Ordering.API.Extensions
 {
@@ -25,9 +28,30 @@ namespace Ordering.API.Extensions
                     });
                 });
             });
+            services.AddHttpContextAccessor();
 
             services.AddTransient<BasketCheckoutConsumer>();
             services.AddLogging();
+
+            // Authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                   .AddJwtBearer(options =>
+                   {
+                       options.TokenValidationParameters = new TokenValidationParameters
+                       {
+                           ValidateIssuer = true,
+                           ValidateAudience = true,
+                           ValidateLifetime = true,
+                           ValidateIssuerSigningKey = true,
+                           ValidIssuer = configuration["JWTAuth:ValidIssuerURL"],
+                           ValidAudience = configuration["JWTAuth:ValidAudienceURL"],
+                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"])),
+                       };
+                   });
         }
     }
 }

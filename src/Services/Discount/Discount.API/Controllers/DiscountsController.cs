@@ -1,6 +1,8 @@
 ﻿using Discount.API.Entities;
 using Discount.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
 
 namespace Discount.API.Controllers
 {
@@ -15,35 +17,38 @@ namespace Discount.API.Controllers
             _discountRepository = discountRepository;
         }
 
-        [HttpGet("{productName}", Name = "GetDiscount")]
+        [HttpGet("{discountId}", Name = "GetDiscount")]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDiscount(string productName)
+        public async Task<IActionResult> GetDiscount(string discountId)
         {
-            var coupon = await _discountRepository.GetDiscount(productName);
+            var coupon = await _discountRepository.GetDiscount(discountId);
             return Ok(coupon);
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status201Created)]
+        [Authorize(Roles = $"{Role.Admin}")]
         public async Task<IActionResult> CreateDiscount([FromBody] Coupon coupon)
         {
             await _discountRepository.CreateDiscount(coupon);
-            return CreatedAtRoute("GetDiscount", new { ProductName = coupon.ProductName }, coupon);
+            return CreatedAtRoute("GetDiscount", new { DiscountId = coupon.Id }, coupon);
         }
 
         [HttpPut]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status200OK)]
+        [Authorize(Roles = $"{Role.Admin}")]
         public async Task<IActionResult> UpdateDiscount([FromBody] Coupon coupon)
         {
             return Ok(await _discountRepository.UpdateDiscount(coupon));
         }
 
-        [HttpDelete("{productName}", Name = "DeleteDiscount")]
+        [HttpDelete("{discountId}", Name = "DeleteDiscount")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteDiscount(string productName)
+        [Authorize(Roles = $"{Role.Admin}")]
+        public async Task<IActionResult> DeleteDiscount(string discountId)
         {
-            return Ok(await _discountRepository.DeleteDiscount(productName));
+            return Ok(await _discountRepository.DeleteDiscount(discountId));
         }
     }
 }

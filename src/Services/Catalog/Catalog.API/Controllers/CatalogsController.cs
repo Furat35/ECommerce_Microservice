@@ -1,6 +1,10 @@
 ﻿using Catalog.API.Entities;
+using Catalog.API.Helpers.Filters;
+using Catalog.API.Models.Product;
 using Catalog.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
 
 namespace Catalog.API.Controllers
 {
@@ -9,19 +13,17 @@ namespace Catalog.API.Controllers
     public class CatalogsController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        private readonly ILogger<CatalogsController> _logger;
 
-        public CatalogsController(IProductRepository productRepository, ILogger<CatalogsController> logger)
+        public CatalogsController(IProductRepository productRepository)
         {
             _productRepository = productRepository;
-            _logger = logger;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] ProductRequestFilter filters)
         {
-            var products = await _productRepository.GetProductsAsync();
+            var products = await _productRepository.GetProductsAsync(filters);
             return Ok(products);
         }
 
@@ -31,34 +33,30 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> GetProductById(string id)
         {
             var product = await _productRepository.GetProductAsync(id);
-            if (product is null)
-            {
-                _logger.LogError($"Product with id: {id}, not found.");
-                return NotFound();
-            }
-
             return Ok(product);
         }
 
         [HttpGet("[action]/{category}", Name = "GetProductsByCategory")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
-        public async Task<IActionResult> GetProductsByCategory(string category)
+        public async Task<IActionResult> GetProductsByCategory(string category, [FromQuery] ProductRequestFilter filters)
         {
-            var products = await _productRepository.GetProductsByCategoryAsync(category);
+            var products = await _productRepository.GetProductsByCategoryAsync(category, filters);
             return Ok(products);
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{Role.Admin}")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IEnumerable<Product>))]
-        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductAddDto product)
         {
             await _productRepository.CreateProductAsync(product);
-            return CreatedAtRoute("GetProduct", new { id = product.Id }, product);
+            return Ok();
         }
 
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
-        public async Task<IActionResult> UpdateProduct([FromBody] Product product)
+        [Authorize(Roles = $"{Role.Admin}")]
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductUpdateDto product)
         {
             return Ok(await _productRepository.UpdateProductAsync(product));
         }
@@ -66,6 +64,7 @@ namespace Catalog.API.Controllers
 
         [HttpDelete("{id:length(24)}", Name = "DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
+        [Authorize(Roles = $"{Role.Admin}")]
         public async Task<IActionResult> DeleteProduct(string id)
         {
             return Ok(await _productRepository.DeleteProductAsync(id));

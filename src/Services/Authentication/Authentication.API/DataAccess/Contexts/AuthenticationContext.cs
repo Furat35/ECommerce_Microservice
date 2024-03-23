@@ -1,7 +1,7 @@
 ﻿using Authentication.API.Common;
 using Authentication.API.Entities;
-using Authentication.API.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Shared.Helpers;
 using System.Reflection;
 
 namespace Authentication.API.DataAccess.Contexts
@@ -23,19 +23,20 @@ namespace Authentication.API.DataAccess.Contexts
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            var userId = _httpContextAccessor?.HttpContext?.User.GetActiveUserId() ?? "unknown";
             foreach (var entry in ChangeTracker.Entries<EntityBase>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedDate = DateTime.Now;
-                        entry.Entity.CreatedBy = _httpContextAccessor.HttpContext.User.GetActiveUserId();
+                        entry.Entity.CreatedBy = userId;
                         entry.Entity.LastModifiedDate = DateTime.Now;
-                        entry.Entity.LastModifiedBy = _httpContextAccessor.HttpContext.User.GetActiveUserId();
+                        entry.Entity.LastModifiedBy = userId;
                         break;
                     case EntityState.Modified:
                         entry.Entity.LastModifiedDate = DateTime.Now;
-                        entry.Entity.LastModifiedBy = _httpContextAccessor.HttpContext.User.GetActiveUserId();
+                        entry.Entity.LastModifiedBy = userId;
                         break;
                 }
             }

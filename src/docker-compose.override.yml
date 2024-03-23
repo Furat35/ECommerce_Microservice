@@ -36,6 +36,15 @@ services:
     restart: always
     ports:
         - "10433:1433" 
+ 
+  userdb:
+    container_name: userdb
+    environment:
+        SA_PASSWORD: "Firat3521"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "10434:1433" 
      
   rabbitmq:
     container_name: rabbitmq
@@ -107,7 +116,18 @@ services:
     ports:
       - "5004:8080"
 
+  authentication.api:
+    container_name: authentication.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:AuthenticationConnectionString=Server=userdb,1433;Database=UsersDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
+    ports:
+      - "5006:8080"
+    depends_on:
+      - userdb
 
+    # Gatweay
   orderapigw:
     container_name: orderapigw
     environment:
@@ -137,7 +157,7 @@ services:
     ports:
       - "5005:8080"
 
-
+     # UI
   aspnetrunbasics:
     container_name: aspnetrunbasics
     environment:
@@ -154,4 +174,5 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     ports:
-      - "5006:8080"
+      - "5007:8080"
+

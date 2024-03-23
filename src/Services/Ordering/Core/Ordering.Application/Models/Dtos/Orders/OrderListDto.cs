@@ -1,6 +1,5 @@
 ﻿using Ordering.Application.Models.Dtos.Addresses;
 using Ordering.Application.Models.Dtos.PaymentCards;
-using Ordering.Domain.Entities;
 
 namespace Ordering.Application.Models.Dtos.Orders
 {
@@ -8,10 +7,9 @@ namespace Ordering.Application.Models.Dtos.Orders
     {
         public Guid Id { get; set; }
         public decimal TotalPrice { get; set; }
-        public string UserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string EmailAddress { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Mail { get; set; }
         // BillingAddress
         public AddressListDto Address { get; set; }
         // Payment

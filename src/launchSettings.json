@@ -11,7 +11,8 @@
         "ordering.api": "StartDebugging",
         "orderapigw": "StartDebugging",
         "shopping.aggregator": "StartDebugging",
-        "aspnetrunbasics": "StartDebugging"
+        "aspnetrunbasics": "StartDebugging",
+        "authentication.api": "StartDebugging"
       }
     }
   }

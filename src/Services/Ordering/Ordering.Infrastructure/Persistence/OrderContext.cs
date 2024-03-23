@@ -1,32 +1,37 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Ordering.Domain.Common;
 using Ordering.Domain.Entities;
+using Shared.Helpers;
 using System.Reflection;
 
 namespace Ordering.Infrastructure.Persistence
 {
     public class OrderContext : DbContext
     {
-        public OrderContext(DbContextOptions<OrderContext> options) : base(options)
-        {
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
+        public OrderContext(DbContextOptions<OrderContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+        {
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            var activeUserId = _httpContextAccessor?.HttpContext?.User.GetActiveUserId() ?? "unknown";
             foreach (var entry in ChangeTracker.Entries<EntityBase>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedDate = DateTime.Now;
-                        entry.Entity.CreatedBy = "fior";
+                        entry.Entity.CreatedBy = activeUserId;
                         entry.Entity.LastModifiedDate = DateTime.Now;
-                        entry.Entity.LastModifiedBy = "fior";
+                        entry.Entity.LastModifiedBy = activeUserId;
                         break;
                     case EntityState.Modified:
                         entry.Entity.LastModifiedDate = DateTime.Now;
-                        entry.Entity.LastModifiedBy = "fior";
+                        entry.Entity.LastModifiedBy = activeUserId;
                         break;
                 }
             }
@@ -40,6 +45,7 @@ namespace Ordering.Infrastructure.Persistence
         }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<PaymentCard> PaymentCards { get; set; }
     }

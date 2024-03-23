@@ -1,12 +1,12 @@
 ﻿using Authentication.API.Entities;
 using Authentication.API.Enums;
-using Authentication.API.Exceptions;
 using Authentication.API.Helpers.Common;
 using Authentication.API.Models.Dtos.Auth;
 using Authentication.API.Models.Dtos.Users;
 using Authentication.API.Services.Contracts;
 using FluentValidation;
 using FluentValidation.Results;
+using Shared.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -35,6 +35,8 @@ namespace Authentication.API.Services
             var validationResult = await _loginDtoValidator.ValidateAsync(loginUser);
             ThrowBadRequestIfDtoNotValid(validationResult);
             var user = await _userService.GetUserByMailAsync(loginUser.Mail);
+            if (user is null)
+                throw new BadRequestException("Hatalı mail adresi veya şifre!");
             bool isValid = _passwordGenerationService.VerifyPassword(user.PasswordSalt, user.Password, loginUser.Password);
             if (isValid)
             {
@@ -71,8 +73,10 @@ namespace Authentication.API.Services
             var authClaims = new List<Claim>
             {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, $"{user.Name} {user.Surname}"),
+                    new Claim(ClaimTypes.Name, $"{user.Name}"),
+                    new Claim("Surname",$"{user.Surname}"),
                     new Claim(ClaimTypes.Email, user.Mail),
+                    new Claim("Phone", user.Phone),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Role, Enum.GetName(user.Role))
             };

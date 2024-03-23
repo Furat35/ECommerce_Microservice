@@ -4,9 +4,10 @@
 - Discount.Grpc => 10003
 - Order.API => 10004
 - Shopping.Aggregator => 10005
+- Authentication.API => 10006
 
 // Gateway
 - OrderApiGw => 10010
 
 //UI
-- AspnetRunBasics => 10006
+- AspnetRunBasics => 10007

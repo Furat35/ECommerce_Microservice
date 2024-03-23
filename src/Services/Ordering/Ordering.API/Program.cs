@@ -2,6 +2,7 @@ using Ordering.API.Extensions;
 using Ordering.Application.Extensions;
 using Ordering.Infrastructure.Extensions;
 using Ordering.Infrastructure.Persistence;
+using Shared.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCustomExceptionHandling();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

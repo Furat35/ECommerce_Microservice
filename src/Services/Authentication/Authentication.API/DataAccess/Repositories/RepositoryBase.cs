@@ -31,7 +31,7 @@ namespace Authentication.API.DataAccess.Repositories
         public async Task<IReadOnlyList<T>> GetAllAsync(bool disableTracking = true)
         {
             IQueryable<T> query = _dbContext.Set<T>();
-            if(disableTracking)
+            if (disableTracking)
                 query = query.AsNoTracking();
 
             return await query.ToListAsync();
@@ -40,7 +40,7 @@ namespace Authentication.API.DataAccess.Repositories
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, List<Expression<Func<T, object>>> includes = null, bool disableTracking = true)
         {
             IQueryable<T> query = _dbContext.Set<T>();
-            if(disableTracking)
+            if (disableTracking)
                 query = query.AsNoTracking();
 
             if (includes != null)

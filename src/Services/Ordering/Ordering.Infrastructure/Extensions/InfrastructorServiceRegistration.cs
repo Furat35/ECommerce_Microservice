@@ -6,7 +6,7 @@ using Ordering.Application.Infrastructure;
 using Ordering.Application.Models;
 using Ordering.Infrastructure.Mail;
 using Ordering.Infrastructure.Persistence;
-using Ordering.Infrastructure.Repositories;
+using Ordering.Infrastructure.Persistence.Repositories;
 
 namespace Ordering.Infrastructure.Extensions
 {

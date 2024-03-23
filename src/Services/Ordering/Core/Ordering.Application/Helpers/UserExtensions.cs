@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Authentication.API.Helpers
+namespace Ordering.Application.Helpers
 {
     public static class UserExtensions
     {

@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Contracts.Persistence;
 using Ordering.Domain.Common;
-using Ordering.Infrastructure.Persistence;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Ordering.Infrastructure.Repositories
+namespace Ordering.Infrastructure.Persistence.Repositories
 {
     public class RepositoryBase<T> : IAsyncRepository<T> where T : EntityBase
     {

@@ -7,7 +7,7 @@ namespace Ordering.Application.Validators
     {
         public UpdateOrderCommandValidator()
         {
-           
+
         }
     }
 }

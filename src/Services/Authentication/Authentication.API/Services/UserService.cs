@@ -1,17 +1,16 @@
 ﻿using Authentication.API.DataAccess.Contexts;
 using Authentication.API.DataAccess.Repositories;
 using Authentication.API.Entities;
-using Authentication.API.Exceptions;
-using Authentication.API.Helpers;
 using Authentication.API.Helpers.Common;
 using Authentication.API.Models.Dtos.Addresses;
 using Authentication.API.Models.Dtos.PaymentCards;
 using Authentication.API.Models.Dtos.User;
 using Authentication.API.Models.Dtos.Users;
 using Authentication.API.Services.Contracts;
-using Authentication.API.Validations.PaymentCards;
 using AutoMapper;
 using FluentValidation;
+using Shared.Exceptions;
+using Shared.Helpers;
 using System.Text;
 
 namespace Authentication.API.Services
@@ -26,7 +25,7 @@ namespace Authentication.API.Services
         private readonly IValidator<PaymentCardAddDto> _paymentCardAddDtoValidator;
 
         public UserService(AuthenticationContext context, IMapper mapper, IPasswordGenerationService passwordGenerationService,
-            IHttpContextAccessor httpContextAccessor, IValidator<UserAddDto> userAddDtoValidator, IValidator<AddressAddDto> addressAddDtoValidator, 
+            IHttpContextAccessor httpContextAccessor, IValidator<UserAddDto> userAddDtoValidator, IValidator<AddressAddDto> addressAddDtoValidator,
             IValidator<PaymentCardAddDto> paymentCardAddDtoValidator) : base(context)
         {
             _mapper = mapper;

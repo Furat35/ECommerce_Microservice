@@ -14,6 +14,9 @@ services:
   orderdb:
     image: mcr.microsoft.com/mssql/server
 
+  userdb:
+    image: mcr.microsoft.com/mssql/server
+
   rabbitmq:
     image: rabbitmq:3.12.12-management-alpine
 
@@ -66,9 +69,16 @@ services:
       context: .
       dockerfile: WebApps/AspnetRunBasics/Dockerfile
 
+  authentication.api:
+    image: ${DOCKER_REGISTRY-}authenticationapi
+    build:
+      context: .
+      dockerfile: Services/Authentication/Authentication.API/Dockerfile
+
 volumes:
   mongo_data:
   postgres_data:
+
 
 
 
