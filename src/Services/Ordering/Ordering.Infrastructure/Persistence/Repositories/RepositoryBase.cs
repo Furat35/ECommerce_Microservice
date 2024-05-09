@@ -14,17 +14,16 @@ namespace Ordering.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<int> AddAsync(T entity)
         {
             _dbContext.Add(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task<int> DeleteAsync(T entity)
         {
             _dbContext.Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
@@ -94,10 +93,10 @@ namespace Ordering.Infrastructure.Persistence.Repositories
             return await query.FirstOrDefaultAsync(_ => _.Id == id);
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<int> UpdateAsync(T entity)
         {
             _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }

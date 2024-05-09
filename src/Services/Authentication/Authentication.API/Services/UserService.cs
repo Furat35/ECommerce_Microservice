@@ -10,6 +10,7 @@ using Authentication.API.Services.Contracts;
 using AutoMapper;
 using FluentValidation;
 using Shared.Exceptions;
+using Shared.Extensions;
 using Shared.Helpers;
 using System.Text;
 
@@ -21,19 +22,21 @@ namespace Authentication.API.Services
         private readonly IPasswordGenerationService _passwordGenerationService;
         private readonly string _activeUserId;
         private readonly IValidator<UserAddDto> _userAddDtoValidator;
+        private readonly IValidator<UserUpdateDto> _userUpdateDtoValidator;
         private readonly IValidator<AddressAddDto> _addressAddDtoValidator;
         private readonly IValidator<PaymentCardAddDto> _paymentCardAddDtoValidator;
 
         public UserService(AuthenticationContext context, IMapper mapper, IPasswordGenerationService passwordGenerationService,
             IHttpContextAccessor httpContextAccessor, IValidator<UserAddDto> userAddDtoValidator, IValidator<AddressAddDto> addressAddDtoValidator,
-            IValidator<PaymentCardAddDto> paymentCardAddDtoValidator) : base(context)
+            IValidator<PaymentCardAddDto> paymentCardAddDtoValidator, IValidator<UserUpdateDto> userUpdateDtoValidator) : base(context)
         {
             _mapper = mapper;
             _passwordGenerationService = passwordGenerationService;
-            _activeUserId = httpContextAccessor.HttpContext.User.GetActiveUserId();
+            _activeUserId = httpContextAccessor.HttpContext.User.GetActiveUserId(); // todo : throws exception??
             _userAddDtoValidator = userAddDtoValidator;
             _addressAddDtoValidator = addressAddDtoValidator;
             _paymentCardAddDtoValidator = paymentCardAddDtoValidator;
+            _userUpdateDtoValidator = userUpdateDtoValidator;
         }
 
         public async Task<bool> AddUserAsync(UserAddDto user)
@@ -47,60 +50,51 @@ namespace Authentication.API.Services
 
             var result = await AddAsync(userToAdd);
 
-            return result != null;
-        }
-
-        public async Task<bool> CheckIfUserExists(string email)
-        {
-            var user = (await GetAsync(_ => _.Mail.ToUpper() == email.ToUpper())).FirstOrDefault();
-            return user != null;
+            return result != 0;
         }
 
         public async Task<UserListDto> GetUserByIdAsync(string userId)
         {
             var user = await GetByIdAsync(Guid.Parse(userId), [_ => _.PaymentCard, _ => _.Address]);
+            if (user is null)
+                throw new NotFoundException("Kullanıcı bulunamadı!");
+
             return _mapper.Map<UserListDto>(user);
         }
 
-        public async Task<bool> UpdateAddress(AddressAddDto address)
+        public async Task<bool> UpdateAddressAsync(AddressAddDto address)
         {
-            await ValidateAddressAddDto(address);
-            var user = (await GetAsync(_ => _.Id == Guid.Parse(_activeUserId), [_ => _.Address])).FirstOrDefault();
+            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(address, _addressAddDtoValidator);
+            var user = await GetByIdAsync(Guid.Parse(_activeUserId), [_ => _.Address]);
             if (user.Address is null)
                 user.Address = new Address();
             _mapper.Map(address, user.Address);
-            var effectedRows = await UpdateAsync(user);
 
-            return effectedRows != 0;
+            return await UpdateAsync(user) != 0;
         }
 
-        public async Task<bool> UpdatePaymentCard(PaymentCardAddDto paymentCard)
+        public async Task<bool> UpdatePaymentCardAsync(PaymentCardAddDto paymentCard)
         {
-            await ValidatePaymentCardAddDto(paymentCard);
+            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(paymentCard, _paymentCardAddDtoValidator);
             var user = (await GetAsync(_ => _.Id == Guid.Parse(_activeUserId), [_ => _.PaymentCard])).FirstOrDefault();
             if (user.PaymentCard is null)
                 user.PaymentCard = new PaymentCard();
             _mapper.Map(paymentCard, user.PaymentCard);
-            var effectedRows = await UpdateAsync(user);
 
-            return effectedRows != 0;
+            return await UpdateAsync(user) != 0;
         }
 
-        public async Task<User> GetUserByMailAsync(string mail)
+        public async Task<bool> UpdateDataAsync(UserUpdateDto userDto, string userId)
         {
-            var user = (await GetAsync(_ => _.Mail.ToLower() == mail.ToLower())).FirstOrDefault();
-            return user;
-        }
-
-        public async Task<bool> SafeDeleteUserAsync(string userId)
-        {
+            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(userDto, _userUpdateDtoValidator);
             var user = await GetByIdAsync(Guid.Parse(userId));
             if (user is null)
-                return false;
+                throw new NotFoundException("Kullanıcı bulunamadı!");
 
-            user.IsDeleted = true;
-            var result = await UpdateAsync(user);
-            return result != null;
+            _mapper.Map(userDto, user);
+
+            return await UpdateAsync(user) != 0;
+
         }
 
         public async Task<bool> UpdateUserPasswordAsync(string userId, string password)
@@ -113,6 +107,22 @@ namespace Authentication.API.Services
             user.Password = generatePassword.storedHashedPassword;
             user.PasswordSalt = generatePassword.storedSalt;
 
+            return await UpdateAsync(user) != 0;
+        }
+
+        public async Task<User> GetUserByMailAsync(string mail)
+            => (await GetAsync(_ => _.Mail.ToLower() == mail.ToLower())).FirstOrDefault();
+
+        public async Task<bool> CheckIfUserExistsAsync(string email)
+            => (await GetAsync(_ => _.Mail.ToUpper() == email.ToUpper())).FirstOrDefault() != null;
+
+        public async Task<bool> SafeDeleteUserAsync(string userId)
+        {
+            var user = await GetByIdAsync(Guid.Parse(userId));
+            if (user is null)
+                return false;
+
+            user.IsDeleted = true;
             return await UpdateAsync(user) != 0;
         }
 
@@ -133,23 +143,9 @@ namespace Authentication.API.Services
             if (!userState.IsValid)
                 throw new BadRequestException(userState.Errors.First().ErrorMessage);
             if (user.Address != null)
-                await ValidateAddressAddDto(user.Address);
+                await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(user.Address, _addressAddDtoValidator);
             if (user.PaymentCard != null)
-                await ValidatePaymentCardAddDto(user.PaymentCard);
-        }
-
-        private async Task ValidateAddressAddDto(AddressAddDto address)
-        {
-            var addressState = await _addressAddDtoValidator.ValidateAsync(address);
-            if (!addressState.IsValid)
-                throw new BadRequestException(addressState.Errors.First().ErrorMessage);
-        }
-
-        private async Task ValidatePaymentCardAddDto(PaymentCardAddDto paymentCard)
-        {
-            var validationResult = await _paymentCardAddDtoValidator.ValidateAsync(paymentCard);
-            if (!validationResult.IsValid)
-                throw new BadRequestException(validationResult.Errors.First().ErrorMessage);
+                await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(user.PaymentCard, _paymentCardAddDtoValidator);
         }
     }
 }

@@ -1,5 +1,90 @@
 {
   "Routes": [
+    // Auth API
+    {
+      "DownstreamPathTemplate": "/api/v1/Auth/Register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/Register",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Auth/Login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/Login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Users/Address",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/User/Address",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Users/PaymentCard",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/User/PaymentCard",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Users/Data",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/User/Data",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Users",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/User",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Users/{userId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5006"
+        }
+      ],
+      "UpstreamPathTemplate": "/User/{userId}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ]
+    },
     //Catalog API
     {
       "DownstreamPathTemplate": "/api/v1/Catalogs",
@@ -11,8 +96,7 @@
         }
       ],
       "UpstreamPathTemplate": "/Catalog",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
-      "FileCacheOptions": { "TtlSeconds": 30 }
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/Catalogs/{id}",
@@ -24,10 +108,10 @@
         }
       ],
       "UpstreamPathTemplate": "/Catalog/{id}",
-      "UpstreamHttpMethod": [ "GET", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/api/v1/Catalogs/GetProductByCategory/{category}",
+      "DownstreamPathTemplate": "/api/v1/Catalogs/Category",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -35,12 +119,37 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/Catalog/GetProductByCategory/{category}",
+      "UpstreamPathTemplate": "/Catalog/Category",
       "UpstreamHttpMethod": [ "GET" ]
+    },
+    // Category API
+    {
+      "DownstreamPathTemplate": "/api/v1/Categories",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5000"
+        }
+      ],
+      "UpstreamPathTemplate": "/Category",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Categories/{categoryId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5000"
+        }
+      ],
+      "UpstreamPathTemplate": "/Category/{categoryId}",
+      "UpstreamHttpMethod": [ "DELETE" ]
     },
     //Basket API
     {
-      "DownstreamPathTemplate": "/api/v1/Baskets/{userName}",
+      "DownstreamPathTemplate": "/api/v1/Baskets/Remove/{productId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -48,8 +157,20 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Basket/{userName}",
-      "UpstreamHttpMethod": [ "GET", "DELETE" ]
+      "UpstreamPathTemplate": "/Basket/{productId}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Baskets/Refresh",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5001"
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/Refresh",
+      "UpstreamHttpMethod": [ "PUT" ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/Baskets",
@@ -61,10 +182,10 @@
         }
       ],
       "UpstreamPathTemplate": "/Basket",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "DELETE", "PUT", "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/v1/Baskets/Checkout",
+      "DownstreamPathTemplate": "/api/v1/Baskets/CheckoutBasket",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -72,7 +193,7 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Basket/CheckoutBasket",
+      "UpstreamPathTemplate": "/Basket/Checkout",
       "UpstreamHttpMethod": [ "POST" ],
       "RateLimitOptions": {
         "ClientWhitelist": [],
@@ -82,9 +203,21 @@
         "Limit": 1
       }
     },
+    {
+      "DownstreamPathTemplate": "/api/v1/Baskets/DecreaseItemQuantity/{productId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5001"
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/DecreaseItemQuantity/{productId}",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
     //Discount API
     {
-      "DownstreamPathTemplate": "/api/v1/Discounts/{productName}",
+      "DownstreamPathTemplate": "/api/v1/Discounts/{discountId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -92,7 +225,7 @@
           "Port": "5002"
         }
       ],
-      "UpstreamPathTemplate": "/Discount/{productName}",
+      "UpstreamPathTemplate": "/Discount/{discountId}",
       "UpstreamHttpMethod": [ "GET", "DELETE" ]
     },
     {
@@ -109,7 +242,7 @@
     },
     //Order API
     {
-      "DownstreamPathTemplate": "/api/v1/Orders/{userName}",
+      "DownstreamPathTemplate": "/api/v1/Orders",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -117,8 +250,33 @@
           "Port": "5004"
         }
       ],
-      "UpstreamPathTemplate": "/Order/{userName}",
+      "UpstreamPathTemplate": "/Order",
       "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Orders/{orderId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5004"
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/{orderId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    //Payment API
+    {
+      "DownstreamPathTemplate": "/api/v1/Payments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5007"
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {

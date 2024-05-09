@@ -1,0 +1,217 @@
+﻿@using System.Globalization
+@using ECommerce.UI.Helpers
+@using ECommerce.UI.Models.Dtos.ViewModels.Categories
+@model (List<CategoryListModel> categories, Metadata pagination)
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Ürünler";
+    CultureInfo turkishCulture = new CultureInfo("tr-TR");
+    int i = 0;
+}
+@section Styles {
+    <style>
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #editForm {
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+}
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <div class="card mt-2">
+                <div class="card-body">
+                    <div class="row">
+
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="text-align:center;">#</th>
+                                    <th scope="col" style="text-align:center;">Id</th>
+                                    <th scope="col" style="text-align:center;">Kategori</th>
+                                    <th scope="col" style="text-align:center;">Güncelle</th>
+                                    <th scope="col" style="text-align:center;">Sil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in Model.categories)
+                                {
+                                    i++;
+                                    <tr>
+                                        <th style="text-align:center;">@(Model.pagination.PageSize * (Model.pagination.CurrentPage - 1) + i)</th>
+                                        <th style="text-align:center;">@category.CategoryId</th>
+                                        <th style="text-align:center;">@category.Name</th>
+                                        <td style="text-align:center;">
+                                            <button type="button" class="btn btn-primary edit-category" data-toggle="modal" data-target="#updateModal"
+                                                    data-category-id="@category.CategoryId" data-category-name="@category.Name">
+                                                Güncelle
+                                            </button>
+                                        </td>
+                                        <td style="text-align:center;">
+                                            <button type="button" class="btn btn-danger deleteCategory" data-toggle="modal" data-target="#deleteModal"
+                                                    data-category-id="@category.CategoryId" data-category-name="@category.Name">
+                                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                Sil
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Update Modal-->
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Kategori Güncelleme</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" asp-controller="Categories" asp-action="UpdateCategory" method="post" enctype="multipart/form-data" style="margin-bottom:50px">
+                        <input type="hidden" id="Id" name="CategoryId">
+
+                        <label for="categoryName">Kategori Adı</label>
+                        <input type="text" id="Name" name="Name"><br><br>
+
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-primary">Güncelle</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Delete Modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Ürün Güncelleme</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="deleteForm" asp-controller="Categories" asp-action="DeleteCategory" method="post">
+                        <label for="id">Kategori Id</label>
+                        <input type="text" readonly id="id" name="id">
+
+                        <label for="categoryToDelete">Ürün Adı</label>
+                        <input type="text" id="categoryToDelete" name="categoryToDelete" readonly><br><br>
+
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-danger">Sil</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 mt-4">
+        <nav aria-label="...">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item @(!Model.pagination.HasPrevious ? "disabled" : null)">
+                    <a class="page-link" asp-action="CategoryTransactions" asp-route-page="@(Model.pagination.CurrentPage - 1)" tabindex="-1">Önceki</a>
+                </li>
+
+                @if (Model.pagination.HasPrevious)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="CategoryTransactions" asp-route-page="@(Model.pagination.CurrentPage - 1)" tabindex="-1">@(Model.pagination.CurrentPage - 1)</a>
+                    </li>
+                }
+
+                <li class="page-item active">
+                    <a class="page-link" href="#">@Model.pagination.CurrentPage <span class="sr-only">(Aktif)</span></a>
+                </li>
+
+                @if (Model.pagination.HasNext)
+                {
+                    <li class="page-item"><a class="page-link" asp-action="CategoryTransactions" asp-route-page="@(Model.pagination.CurrentPage + 1)">@(Model.pagination.CurrentPage + 1)</a></li>
+                }
+
+                <li class="page-item @(!Model.pagination.HasNext ? "disabled" : null)">
+                    <a class="page-link" asp-action="CategoryTransactions" asp-route-page="@(Model.pagination.CurrentPage + 1)" tabindex="-1">Sonraki</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // -------- Category Delete Modal --------
+        var deleteButtons = document.querySelectorAll('.deleteCategory');
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                // Extract category details from the clicked button
+                let categoryId = button.getAttribute('data-category-id');
+                let categoryName = button.getAttribute('data-category-name');
+
+                // Populate modal fields with category details
+                document.getElementById('id').value = categoryId;
+                document.getElementById('categoryToDelete').value = categoryName;
+            });
+        });
+
+        // -------- Category Update Modal --------
+        var editButtons = document.querySelectorAll('.edit-category');
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                // Extract category details from the clicked button
+                let categoryId = button.getAttribute('data-category-id');
+                let categoryName = button.getAttribute('data-category-name');
+
+                // Populate modal fields with category details
+                document.getElementById('Id').value = categoryId;
+                document.getElementById('Name').value = categoryName;
+            });
+        });
+    });
+
+</script>

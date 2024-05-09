@@ -5,8 +5,8 @@ using Authentication.API.Models.Dtos.Auth;
 using Authentication.API.Models.Dtos.Users;
 using Authentication.API.Services.Contracts;
 using FluentValidation;
-using FluentValidation.Results;
 using Shared.Exceptions;
+using Shared.Extensions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -30,10 +30,9 @@ namespace Authentication.API.Services
             _loginDtoValidator = loginDtoValidator;
         }
 
-        public async Task<string> UserLoginAsync(LoginDto loginUser)
+        public async Task<LoginResponseDto> UserLoginAsync(LoginDto loginUser)
         {
-            var validationResult = await _loginDtoValidator.ValidateAsync(loginUser);
-            ThrowBadRequestIfDtoNotValid(validationResult);
+            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(loginUser, _loginDtoValidator);
             var user = await _userService.GetUserByMailAsync(loginUser.Mail);
             if (user is null)
                 throw new BadRequestException("Hatalı mail adresi veya şifre!");
@@ -43,17 +42,24 @@ namespace Authentication.API.Services
                 var claims = ConfigureUserClaims(user);
                 var token = _tokenService.GenerateToken(claims);
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
+                return new LoginResponseDto
+                {
+                    Id = user.Id.ToString(),
+                    Mail = user.Mail,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Phone = user.Phone,
+                    Role = Enum.GetName(user.Role),
+                    Token = new JwtSecurityTokenHandler().WriteToken(token)
+                };
             }
 
             throw new BadRequestException("Hatalı mail adresi veya şifre!");
-
         }
 
         public async Task<bool> UserRegisterAsync(RegisterDto registerUser, Role role)
         {
-            var validationResult = await _registerDtoValidator.ValidateAsync(registerUser);
-            ThrowBadRequestIfDtoNotValid(validationResult);
+            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(registerUser, _registerDtoValidator);
             var user = new UserAddDto
             {
                 Name = registerUser.Name,
@@ -82,12 +88,6 @@ namespace Authentication.API.Services
             };
 
             return authClaims;
-        }
-
-        private void ThrowBadRequestIfDtoNotValid(ValidationResult validationResult)
-        {
-            if (!validationResult.IsValid)
-                throw new BadRequestException(validationResult.Errors.First().ErrorMessage);
         }
     }
 }

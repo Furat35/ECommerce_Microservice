@@ -6,6 +6,6 @@ namespace Authentication.API.Services.Contracts
     public interface IAuthService
     {
         Task<bool> UserRegisterAsync(RegisterDto registerUser, Role role);
-        Task<string> UserLoginAsync(LoginDto loginUser);
+        Task<LoginResponseDto> UserLoginAsync(LoginDto loginUser);
     }
 }

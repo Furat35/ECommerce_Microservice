@@ -9,15 +9,14 @@ namespace Basket.API.ExternalApiCalls
         public CatalogExternalService(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("Catalog.Api");
-
         }
 
-        public async Task<Product> GetProductById(string productId)
+        public async Task<ProductListDto> GetProductById(string productId)
         {
-            Product product = null;
+            ProductListDto product = null;
             try
             {
-                product = await _httpClient.GetFromJsonAsync<Product>($"api/v1/catalogs/{productId}");
+                product = await _httpClient.GetFromJsonAsync<ProductListDto>($"api/v1/catalogs/{productId}");
             }
             catch (Exception ex)
             {

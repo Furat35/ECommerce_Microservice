@@ -1,0 +1,59 @@
+﻿@using System.Globalization
+@using Shared.Constants
+
+@model ProductListModel
+
+@{
+    CultureInfo turkishCulture = new CultureInfo("tr-TR");
+}
+
+<div class="card mt-2" style="@(User.IsInRole(Role.Admin) ? "height:350px" : "height:400px");box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);">
+    <img asp-append-version="true" height="150px" class="card-img-top" src="@(@Model.ImageFile != null ? "data:image/jpeg;base64," + @Model.ImageFile : "https://dummyimage.com/250x250/55595c/fff")" />
+    <div class="card-body">
+        <h4 class="card-title" style="height:30px;">
+            <a asp-action="GetProductDetail" asp-route-productId="@Model.Id" style="font-size:18px;" class="color-main">
+                @(Model.Name.Substring(0, Model.Name.Length > 12 ? 12 : Model.Name.Length)) @(Model.Name.Length > 12 ? ".." : null)
+            </a>
+        </h4>
+        <p class="card-text" style="height:50px;">@Model.Summary.Substring(0, Model.Summary.Length > 30 ? 30 : Model.Summary.Length) @(Model.Summary.Length > 12 ? ".." : null)</p>
+        <hr />
+        <div class="row">
+            <div class="col-12">
+                <p class="btn-block" style="text-align:center;font-weight:bolder;box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);">
+                    @if (Model.Discount != 0)
+                    {
+                        @Model.DiscountedPrice.ToString("N2", turkishCulture)
+                        <del style="color:red;" class="fs-1">(@Model.Price TL)</del>
+                    }
+                    else
+                    {
+                        @Model.Price.ToString("N2", turkishCulture) 
+                    }
+                    <span>TL</span>
+                </p>
+            </div>
+            <div class="col">
+                <form asp-controller="Baskets" asp-action="AddToCart" method="post">
+                    <input type="hidden" name="Quantity" value="1" />
+
+                    @if (Model.Discount != 0)
+                    {
+                        <input type="hidden" name="Price" value="@Model.DiscountedPrice.ToString("N2", turkishCulture)" />
+                    }
+                    else
+                    {
+                        <input type="hidden" name="Price" value="@Model.Price.ToString("N2", turkishCulture)" /> 
+                    }
+                    <input type="hidden" name="ProductId" value="@Model.Id" />
+                    <input type="hidden" name="ProductName" value="@Model.Name" />
+                    @if(User.Identity.IsAuthenticated && User.IsInRole(Role.User))
+                    {
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fa fa-shopping-cart"></i> Sepete Ekle
+                        </button>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

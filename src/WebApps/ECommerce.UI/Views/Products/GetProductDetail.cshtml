@@ -1,0 +1,83 @@
+﻿@using System.Globalization
+@using Shared.Constants
+
+@model ProductListModel
+@{
+    ViewData["Title"] = "Ürün Detayı";
+    CultureInfo turkishCulture = new CultureInfo("tr-TR");
+}
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Image -->
+        <div class="col-12 col-lg-6">
+            <div class="card bg-light mb-3" style="height:360px">
+                <div class="card-body">
+                    <img asp-append-version="true" height="320px" class="card-img-top" src="@(@Model.ImageFile != null ? "data:image/jpeg;base64," + @Model.ImageFile : "https://dummyimage.com/320x320/55595c/fff")" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Add to cart -->
+        <div class="col-12 col-lg-6 add_to_cart_block">
+            <div class="card bg-light mb-3" style="height:360px">
+                <div class="card-body">
+                    <p><strong style="font-size:30px;">@Model.Name</strong> <br /><small style="font-size:13px;">(@Model.Id)</small></p>
+                    <p>
+                        <strong>Fiyat</strong> :
+                        @if (Model.Discount != 0)
+                        {
+                            @Model.DiscountedPrice.ToString("N2", turkishCulture) <span>TL</span>
+                            <del style="color:red;">(@Model.Price TL)</del>
+                        }
+                        else
+                        {
+                            @Model.Price.ToString("N2", turkishCulture) <span>TL</span>
+                        }
+                    </p>
+                    <p><strong>Ürün Kategorisi</strong> : @Model.Category.Name</p>
+                    <form class="mt-4 mb-4" asp-controller="Baskets" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="Quantity" value="1" />
+                        <input type="hidden" name="Price" value="@Model.Price" />
+                        <input type="hidden" name="ProductId" value="@Model.Id" />
+                        <input type="hidden" name="ProductName" value="@Model.Name" />
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole(Role.User))
+                        {
+                            <button type="submit" class="btn btn-success" style="text-align:center;width:100%">
+                                <i class="fa fa-shopping-cart"></i> Sepete Ekle
+                            </button>
+                        }
+
+                    </form>
+                    <div class="product_rassurance">
+                        <ul class="list-inline">
+                            <li class="list-inline-item" style="text-align:center;"><i class="fa fa-truck fa-2x"></i><br />Hızlı Teslimat</li>
+                            <li class="list-inline-item" style="text-align:center;"><i class="fa fa-credit-card fa-2x"></i><br />Güvenli Ödeme</li>
+                            <li class="list-inline-item" style="text-align:center;"><i class="fa fa-phone fa-2x"></i><br />+212 432 53 43</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Description -->
+        <div class="col-12">
+            <div class="card border-light mb-3">
+                <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-align-justify"></i> Açıklama</div>
+                <div class="card-body">
+                    <p class="card-text">
+                        @Model.Summary
+                    </p>
+                    <p class="card-text">
+                        @Model.Description
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

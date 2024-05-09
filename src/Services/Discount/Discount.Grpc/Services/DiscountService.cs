@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
-using Discount.Grpc.Entities;
 using Discount.Grpc.Protos;
 using Discount.Grpc.Repositories;
 using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Shared.Constants;
 
 namespace Discount.Grpc.Services
 {
@@ -21,45 +18,11 @@ namespace Discount.Grpc.Services
             _mapper = mapper;
         }
 
-        [Authorize(Roles = $"{Role.Admin}")]
-        public override async Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
-        {
-            var coupon = _mapper.Map<Coupon>(request.Coupon);
-            await _discountRepository.CreateDiscount(coupon);
-            _logger.LogInformation("Discount is successfully created. DiscountId : {DiscountId}", coupon.Id);
-            var couponModel = _mapper.Map<CouponModel>(coupon);
-
-            return couponModel;
-        }
-
-        [Authorize(Roles = $"{Role.Admin}")]
-        public override async Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
-        {
-            var deleted = await _discountRepository.DeleteDiscount(request.DiscountId);
-            var response = new DeleteDiscountResponse
-            {
-                Success = deleted
-            };
-
-            return response;
-        }
-
         public override async Task<CouponModel> GetDiscount(GetDiscountRequest request, ServerCallContext context)
         {
             var coupon = await _discountRepository.GetDiscount(request.ProductId);
             if (coupon is null)
                 throw new RpcException(new Status(StatusCode.NotFound, $"Discount for Product Id={request.ProductId} is not found."));
-            var couponModel = _mapper.Map<CouponModel>(coupon);
-
-            return couponModel;
-        }
-
-        [Authorize(Roles = $"{Role.Admin}")]
-        public override async Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
-        {
-            var coupon = _mapper.Map<Coupon>(request.Coupon);
-            await _discountRepository.UpdateDiscount(coupon);
-            _logger.LogInformation("Discount is successfully updated. DiscountId : {DiscountId}", coupon.Id);
             var couponModel = _mapper.Map<CouponModel>(coupon);
 
             return couponModel;

@@ -1,5 +1,11 @@
 ﻿using Catalog.API.Data;
+using Catalog.API.GrpcServices;
 using Catalog.API.Repositories;
+using Catalog.API.Repositories.Contracts;
+using Catalog.API.Services;
+using Catalog.API.Services.Contracts;
+using Discount.Grpc.Protos;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
@@ -19,9 +25,15 @@ namespace Catalog.API.Extensions
             services.AddSwaggerGen();
             services.AddScoped<ICatalogContext, CatalogContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IProductPhotoService, ProductPhotoService>();
+            services.AddScoped<DiscountGrpcService>();
+            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(o => o.Address = new Uri(configuration["GrpcSettings:DiscountUrl"]));
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddHttpContextAccessor();
+
             // Authentication
             services.AddAuthentication(options =>
             {
@@ -41,6 +53,8 @@ namespace Catalog.API.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"])),
                     };
                 });
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 }

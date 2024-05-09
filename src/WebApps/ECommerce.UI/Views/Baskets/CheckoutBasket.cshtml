@@ -1,0 +1,148 @@
+﻿@using ECommerce.UI.Models.Dtos.ViewModels.Baskets
+@using ECommerce.UI.Models.Dtos.ViewModels.Users
+@using System.Globalization
+@using Shared.Enums
+@model (BasketCheckoutModel basketCheckout, ShoppingCartModel shoppingCart, UserListModel user)
+@{
+    ViewData["Title"] = "Sipariş Bilgileri";
+    CultureInfo turkishCulture = new CultureInfo("tr-TR");
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-4 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Sepetiniz </span>
+                <span class="badge badge-secondary badge-pill">@Model.shoppingCart.Items.Count adet ürün</span>
+            </h4>
+            <ul class="list-group mb-3">
+
+                @foreach (var item in Model.shoppingCart.Items)
+                {
+                    <li class="list-group-item lh-condensed">
+                        <div>
+                            <h6 class="my-0">@item.ProductName</h6>
+                        </div>
+                        <span class="text-muted">@item.Price.ToString("N2", turkishCulture) TL x @item.Quantity (Adet) : @((item.Price * item.Quantity).ToString("N2", turkishCulture)) TL</span>
+                    </li>
+                }
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Toplam Tutar (TL)</span>
+                    <strong>@Model.shoppingCart.TotalPrice.ToString("N2", turkishCulture) TL</strong>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-8 order-md-1">
+            <hr class="mb-4">
+            <form asp-controller="Baskets" asp-action="CheckoutBasket" method="post">
+                @* class="needs-validation" novalidate *@
+                <h4 class="mb-3">Kişi Bilgileri</h4>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="basketCheckout.Name" for="name">Ad</label>
+                        <input asp-for="basketCheckout.Name" name="Name" type="text" class="form-control" id="name" placeholder="" value="" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="basketCheckout.Surname" for="lastName">Last name</label>
+                        <input asp-for="basketCheckout.Surname" name="Surname" type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                    </div>
+                </div>
+                <hr class="mb-4">
+
+                @* Billing Address *@
+                <h4 class="mb-3">
+                    Adres Bilgileri
+                    <small><button style="font-size:14px;" class="btn btn-warning badge badge-secondary badge-pillg" type="button" id="clearAddressInfo">Kayıtlı Bilgilerini Sil</button></small>
+                </h4>
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.Address.AddressLine" for="addressline">Adres Başlığı <span class="text-muted">(Optional)</span></label>
+                    <input asp-for="basketCheckout.Address.AddressLine" name="Address.AddressLine" value="@Model.user.Address?.AddressLine" type="text" class="form-control" id="addressline" placeholder="">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.Address.Country" for="country">Ülke</label>
+                    <input asp-for="basketCheckout.Address.Country" name="Address.Country" value="@Model.user.Address?.Country" type="text" class="form-control" id="country" placeholder="">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.Address.State" for="state">Şehir</span></label>
+                    <input asp-for="basketCheckout.Address.State" name="Address.State" value="@Model.user.Address?.State" type="text" class="form-control" id="state" placeholder="">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.Address.ZipCode" for="zipCode">Posta Kodu</label>
+                    <input asp-for="basketCheckout.Address.ZipCode" name="Address.ZipCode" value="@Model.user.Address?.ZipCode" type="text" class="form-control" id="zipCode" placeholder="">
+                </div>
+                <hr class="mb-4">
+
+
+                @* Payment Card *@
+                <h4 class="mb-3">
+                    Ödeme Bilgileri
+                    <small><button style="font-size:14px;" class="btn btn-warning badge badge-secondary badge-pillg" type="button" id="clearPaymentInfo">Ödeme Bilgilerini Sil</button></small>
+                </h4>
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.PaymentCard.CardName" for="cardName">Kart Adı</label>
+                    <input asp-for="basketCheckout.PaymentCard.CardName" name="PaymentCard.CardName" value="@Model.user.PaymentCard?.CardName" type="cardName" class="form-control" id="cardName" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.PaymentCard.CardNumber" for="cardNumber">Kart Numarası</label>
+                    <input asp-for="basketCheckout.PaymentCard.CardNumber" name="PaymentCard.CardNumber" value="@Model.user.PaymentCard?.CardNumber" type="cardNumber" class="form-control" id="cardNumber" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.PaymentCard.Expiration" for="expiration">Geçerlilik Tarihi</label>
+                    <input asp-for="basketCheckout.PaymentCard.Expiration" name="PaymentCard.Expiration" value="@Model.user.PaymentCard?.Expiration" type="expiration" class="form-control" id="expiration" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.PaymentCard.CVV" for="cvv">CVV</label>
+                    <input asp-for="basketCheckout.PaymentCard.CVV" name="PaymentCard.CVV" value="@Model.user.PaymentCard?.CVV" type="cvv" class="form-control" id="cvv" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="basketCheckout.PaymentCard.PaymentMethod" for="paymentMethod">Ödeme Yöntemi</label>
+                    <select asp-for="basketCheckout.PaymentCard.PaymentMethod" name="PaymentCard.PaymentMethod" class="form-control" id="paymentMethod">
+                        @foreach (var paymentMethod in Enum.GetValues(typeof(PaymentMethod)))
+                        {
+                            <option value="@paymentMethod">
+                                @if (paymentMethod.Equals(PaymentMethod.DebitCard))
+                                {
+                                    @:Banka Kartı
+                                }
+                                else if (paymentMethod.Equals(PaymentMethod.CreditCard))
+                                {
+                                    @:Kredi Kartı
+                                }
+                            </option>
+                        }
+                    </select>
+                </div>
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Checkout Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to clear payment information
+        function clearPaymentInfo() {
+            document.getElementById("cardName").value = "";
+            document.getElementById("cardNumber").value = "";
+            document.getElementById("expiration").value = "";
+            document.getElementById("cvv").value = "";
+        }
+
+        function clearAddressInfo() {
+            document.getElementById("addressline").value = "";
+            document.getElementById("country").value = "";
+            document.getElementById("state").value = "";
+            document.getElementById("zipCode").value = "";
+        }
+
+        // Add event listener to the clearAddressInfo button
+        document.getElementById("clearAddressInfo").addEventListener("click", clearAddressInfo);
+        // Add event listener to the clearPaymentInfo button
+        document.getElementById("clearPaymentInfo").addEventListener("click", clearPaymentInfo);
+    });
+</script>

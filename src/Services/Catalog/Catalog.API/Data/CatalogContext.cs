@@ -9,10 +9,12 @@ namespace Catalog.API.Data
         {
             var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
             var database = client.GetDatabase(configuration.GetValue<string>("DatabaseSettings:DatabaseName"));
-            Products = database.GetCollection<Product>(configuration.GetValue<string>("DatabaseSettings:CollectionName"));
-            CatalogContextSeed.SeedData(Products);
+            Products = database.GetCollection<Product>(configuration.GetValue<string>("DatabaseSettings:ProductCollectionName"));
+            Categories = database.GetCollection<Category>(configuration.GetValue<string>("DatabaseSettings:CategoryCollectionName"));
+            CatalogContextSeed.SeedData(Products, Categories);
         }
 
         public IMongoCollection<Product> Products { get; }
+        public IMongoCollection<Category> Categories { get; }
     }
 }

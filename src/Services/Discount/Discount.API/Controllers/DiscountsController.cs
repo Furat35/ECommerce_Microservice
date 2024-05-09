@@ -1,4 +1,5 @@
 ﻿using Discount.API.Entities;
+using Discount.API.Models.Dtos.Coupons;
 using Discount.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,16 +30,15 @@ namespace Discount.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status201Created)]
         [Authorize(Roles = $"{Role.Admin}")]
-        public async Task<IActionResult> CreateDiscount([FromBody] Coupon coupon)
+        public async Task<IActionResult> CreateDiscount([FromBody] CouponAddDto coupon)
         {
-            await _discountRepository.CreateDiscount(coupon);
-            return CreatedAtRoute("GetDiscount", new { DiscountId = coupon.Id }, coupon);
+            return Ok(await _discountRepository.CreateDiscount(coupon));
         }
 
         [HttpPut]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status200OK)]
         [Authorize(Roles = $"{Role.Admin}")]
-        public async Task<IActionResult> UpdateDiscount([FromBody] Coupon coupon)
+        public async Task<IActionResult> UpdateDiscount([FromBody] CouponUpdateDto coupon)
         {
             return Ok(await _discountRepository.UpdateDiscount(coupon));
         }

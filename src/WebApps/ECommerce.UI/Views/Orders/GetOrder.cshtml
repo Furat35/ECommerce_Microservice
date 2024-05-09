@@ -1,0 +1,54 @@
+﻿@using System.Globalization
+@model ECommerce.UI.Models.Dtos.ViewModels.Orders.OrderListModel
+
+@{
+    ViewData["Title"] = "Sipariş Detayları";
+    CultureInfo turkishCulture = new CultureInfo("tr-TR");
+}
+<div class="container mt-5" style="margin-bottom:300px">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Sipariş Detayları</h5>
+            <hr>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-muted">Ad:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Name</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-muted">Soyad:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Surname</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-muted">Email:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Mail</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-muted">Adres:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@($"{Model.Address.AddressLine}, {Model.Address.ZipCode}, {Model.Address.State}, {Model.Address.Country}")</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-muted">Ürünler:</label>
+                <div class="col-sm-10">
+                    @foreach (var orderItem in Model.OrderItems)
+                    {
+                        <p class="form-control-plaintext mb-2"><a asp-controller="Products" asp-action="GetProductDetail" asp-route-productId="@orderItem.ProductId"> @($"{orderItem.ProductName} - {orderItem.Quantity} (Adet) - {orderItem.Price.ToString("N2", turkishCulture)} TL")</a></p>
+                    }
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-muted">Toplam Tutar:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.TotalPrice.ToString("N2", turkishCulture) TL</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

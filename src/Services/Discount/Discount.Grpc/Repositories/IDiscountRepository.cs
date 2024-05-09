@@ -5,8 +5,8 @@ namespace Discount.Grpc.Repositories
     public interface IDiscountRepository
     {
         Task<Coupon> GetDiscount(string discountId);
-        Task<bool> CreateDiscount(Coupon coupon);
-        Task<bool> UpdateDiscount(Coupon coupon);
-        Task<bool> DeleteDiscount(string discountId);
+        //Task<bool> CreateDiscount(Coupon coupon);
+        //Task<bool> UpdateDiscount(Coupon coupon);
+        //Task<bool> DeleteDiscount(string discountId);
     }
 }

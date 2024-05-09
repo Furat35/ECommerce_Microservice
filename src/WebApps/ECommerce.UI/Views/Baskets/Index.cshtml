@@ -1,0 +1,87 @@
+﻿@model ECommerce.UI.Models.Dtos.ViewModels.Baskets.ShoppingCartModel
+@{
+    ViewData["Title"] = "Sepet";
+}
+<div class="container mt-5" style="margin-bottom:250px">
+    @if (Model.Items.Count == 0)
+    {
+        <h1 style="text-align:center">Sepette Ürün Bulunmuyor</h1>
+        <div style="text-align:center;margin-bottom:380px;" class="mt-5">
+            <a asp-controller="Products" asp-action="GetProducts" class="btn btn-success">Alışverişe Devam Et</a>
+        </div>
+
+        return;
+    }
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"> </th>
+                            <th scope="col" class="text-center">Ürün</th>
+                            <th scope="col" class="text-center">Adet</th>
+                            <th scope="col" class="text-center">Birim Fiyat</th>
+                            <th scope="col" class="text-center">Toplam Tutar</th>
+                            <th scope="col" class="text-center"> </th>
+                            <th scope="col" class="text-center">Sepetten Kaldır</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var cartItem in Model.Items)
+                        {
+                            <tr>
+                                <td><img src="https://dummyimage.com/50x50/55595c/fff" /></td>
+                                <td>@cartItem.ProductName</td>
+                                <td class="text-center">@cartItem.Quantity</td>
+                                <th class="text-center" style="font-weight:normal;">@cartItem.Price TL</th>
+                                <td class="text-center"><strong>@(cartItem.Price * cartItem.Quantity) TL</strong></td>
+                                <td class="text-center"  style="width:150px">
+                                    <form asp-controller="Baskets" asp-action="DecreaseItemQuantity" method="post" style="display:inline">
+                                        <button class="btn btn-sm btn-warning"><i class="fa fa-minus"></i></button>
+                                        <input type="hidden" asp-for="@cartItem.ProductId" name="productId" />
+                                    </form>
+                                    <form asp-controller="Baskets" asp-action="AddToCart" method="post" style="display:inline">
+                                        <input type="hidden" name="Quantity" value="1" />
+                                        <input type="hidden" name="Price" value="@cartItem.Price" />
+                                        <input type="hidden" name="ProductId" value="@cartItem.ProductId" />
+                                        <input type="hidden" name="ProductName" value="@cartItem.ProductName" />
+                                        <button class="btn btn-sm btn-success"><i class="fa fa-plus"></i></button>
+                                        <input type="hidden" asp-for="@cartItem.ProductId" name="productId" />
+                                    </form>
+                                </td>
+                                <td class ="text-center">
+                                    <form asp-controller="Baskets" asp-action="RemoveItemFromBasket" method="post" style="display:inline">
+                                        <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                        <input type="hidden" asp-for="@cartItem.ProductId" name="productId" />
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-center"><strong>Toplam Tutar</strong></td>
+                            <td class="text-center"><strong>@Model.TotalPrice TL</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <div class="col-sm-12  col-md-6">
+                    <a asp-controller="Products" asp-action="GetProducts" class="btn btn-lg btn-block btn-success">Alışverişe Devam Et</a>
+                </div>
+                <div class="col-sm-12 col-md-6 text-right">
+                    <a asp-controller="Baskets" asp-action="CheckoutBasket" class="btn btn-lg btn-block btn-danger">Siparişi Tamamla</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

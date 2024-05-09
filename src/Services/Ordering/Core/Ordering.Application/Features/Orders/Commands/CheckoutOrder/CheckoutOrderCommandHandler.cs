@@ -5,6 +5,7 @@ using Ordering.Application.Contracts.Persistence;
 using Ordering.Application.Infrastructure;
 using Ordering.Application.Models;
 using Ordering.Domain.Entities;
+using Shared.Exceptions;
 
 namespace Ordering.Application.Features.Orders.Commands.CheckoutOrder
 {
@@ -27,10 +28,14 @@ namespace Ordering.Application.Features.Orders.Commands.CheckoutOrder
         public async Task<Guid> Handle(CheckoutOrderCommand request, CancellationToken cancellationToken)
         {
             var orderEntity = _mapper.Map<Order>(request);
-            var newOrder = await _orderRepository.AddAsync(orderEntity);
-            _logger.LogInformation($"Order {newOrder.Id} is successfully created.");
-            await SendMail(newOrder);
-            return newOrder.Id;
+            var isCreated = await _orderRepository.AddAsync(orderEntity);
+            if (isCreated == 0)
+                throw new BadRequestException("An error occurred during order checkout! Please try again!");
+
+            _logger.LogInformation($"Order {orderEntity.Id} is successfully created.");
+            await SendMail(orderEntity);
+
+            return orderEntity.Id;
         }
 
         private async Task SendMail(Order order)

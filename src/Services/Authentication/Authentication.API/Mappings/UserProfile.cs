@@ -11,6 +11,7 @@ namespace Authentication.API.Mappings
         {
             CreateMap<UserAddDto, User>();
             CreateMap<User, UserListDto>();
+            CreateMap<UserUpdateDto, User>();
         }
     }
 }

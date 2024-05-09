@@ -1,5 +1,5 @@
 ﻿using Authentication.API.Common;
-using Authentication.API.Enums;
+using Shared.Enums;
 
 namespace Authentication.API.Entities
 {

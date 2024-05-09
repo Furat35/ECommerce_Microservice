@@ -1,0 +1,16 @@
+﻿@model ErrorDetail
+@{
+    ViewData["Title"] = Model.StatusCode;
+}
+
+<div class="container">
+    <div class="row justify-content-center" style="margin-top:200px;margin-bottom:300px;">
+        <div>
+            <h2 class="font-weight-bolder" style="font-size:40px;text-align:center;">@Model.StatusCode</h2>
+            <p style="font-size:30px">@Model.ErrorMessage</p><br />
+            <div style="text-align:center;">
+                <a class="btn btn-success" asp-controller="Products" asp-action="GetProducts">Ana Sayfaya Dön</a>
+            </div>
+        </div>
+    </div>
+</div>

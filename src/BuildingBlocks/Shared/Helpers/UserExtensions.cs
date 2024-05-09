@@ -12,7 +12,7 @@ namespace Shared.Helpers
 
         public static string GetActiveUserName(this ClaimsPrincipal principal)
         {
-            var userId = principal.Identities.FirstOrDefault()?.Claims.Where(_ => _.Type == "Name").FirstOrDefault();
+            var userId = principal.Identities.FirstOrDefault()?.Claims.Where(_ => _.Type == ClaimTypes.Name).FirstOrDefault();
             return userId?.Value;
         }
 

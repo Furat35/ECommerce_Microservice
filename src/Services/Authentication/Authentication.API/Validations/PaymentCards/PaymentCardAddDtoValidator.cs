@@ -22,10 +22,6 @@ namespace Authentication.API.Validations.PaymentCards
             RuleFor(_ => _.CVV)
                 .NotEmpty()
                 .WithMessage("CVV boş olamaz");
-
-            RuleFor(_ => _.PaymentMethod)
-                .NotEmpty()
-                .WithMessage("Ödeme yöntemi boş olamaz");
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Catalog.API.Entities;
-using Catalog.API.Helpers.Filters;
-using Catalog.API.Models.Product;
-using Catalog.API.Repositories;
+using Catalog.API.Helpers.Filters.Products;
+using Catalog.API.Models.Products;
+using Catalog.API.Repositories.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Constants;
@@ -27,6 +27,15 @@ namespace Catalog.API.Controllers
             return Ok(products);
         }
 
+        [HttpGet("category", Name = "GetProductsByCategoryId")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProductsByCategoryId([FromQuery] ProductRequestFilter filters)
+        {
+            var product = await _productRepository.GetProductsByCategoryAsync(filters);
+            return Ok(product);
+        }
+
         [HttpGet("{id:length(24)}", Name = "GetProduct")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -36,21 +45,13 @@ namespace Catalog.API.Controllers
             return Ok(product);
         }
 
-        [HttpGet("[action]/{category}", Name = "GetProductsByCategory")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
-        public async Task<IActionResult> GetProductsByCategory(string category, [FromQuery] ProductRequestFilter filters)
-        {
-            var products = await _productRepository.GetProductsByCategoryAsync(category, filters);
-            return Ok(products);
-        }
-
         [HttpPost]
         [Authorize(Roles = $"{Role.Admin}")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IEnumerable<Product>))]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductAddDto product)
+        public async Task<IActionResult> CreateProduct([FromForm] ProductAddDto product)
         {
-            await _productRepository.CreateProductAsync(product);
-            return Ok();
+            var productId = await _productRepository.CreateProductAsync(product);
+            return Ok(productId);
         }
 
         [HttpPut]
@@ -61,6 +62,13 @@ namespace Catalog.API.Controllers
             return Ok(await _productRepository.UpdateProductAsync(product));
         }
 
+        [HttpPut("{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
+        public async Task<IActionResult> UpdateProductPhoto(string productId)
+        {
+            var isUploaded = await _productRepository.UpdateProductPhoto(productId);
+            return Ok(isUploaded);
+        }
 
         [HttpDelete("{id:length(24)}", Name = "DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]

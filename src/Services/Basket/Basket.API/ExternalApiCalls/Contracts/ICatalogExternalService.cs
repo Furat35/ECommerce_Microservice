@@ -4,6 +4,6 @@ namespace Basket.API.ExternalApiCalls.Contracts
 {
     public interface ICatalogExternalService
     {
-        Task<Product> GetProductById(string productId);
+        Task<ProductListDto> GetProductById(string productId);
     }
 }

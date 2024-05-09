@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using EventBus.Message.Events;
+using FluentValidation;
 using MassTransit;
 using MediatR;
 using Ordering.Application.Features.Orders.Commands.CheckoutOrder;
+using SendGrid.Helpers.Errors.Model;
 
 namespace Ordering.API.EventBusConsumer
 {
@@ -11,42 +13,24 @@ namespace Ordering.API.EventBusConsumer
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly ILogger<BasketCheckoutConsumer> _logger;
+        private readonly IValidator<BasketCheckoutEvent> _validator;
 
-        public BasketCheckoutConsumer(IMediator mediator, IMapper mapper, ILogger<BasketCheckoutConsumer> logger)
+        public BasketCheckoutConsumer(IMediator mediator, IMapper mapper, ILogger<BasketCheckoutConsumer> logger, IValidator<BasketCheckoutEvent> validator)
         {
             _mediator = mediator;
             _mapper = mapper;
             _logger = logger;
+            _validator = validator;
         }
 
         public async Task Consume(ConsumeContext<BasketCheckoutEvent> context)
         {
+            var validationResult = await _validator.ValidateAsync(context.Message);
+            if (!validationResult.IsValid)
+                throw new BadRequestException(validationResult.Errors.First().ErrorMessage);
             var command = _mapper.Map<CheckoutOrderCommand>(context.Message);
             var result = await _mediator.Send(command);
             _logger.LogInformation($"BasketCheckoutEvent consumed successfully. Created Order Id : {result}");
         }
-
-        //private bool CheckIfUserIsAuthenticated(Headers headers)
-        //{
-        //    if (!headers.TryGetHeader("Authorization", out var tokenObj) || !(tokenObj is string token))
-        //    {
-        //        _logger.LogError("Authorization token is missing from the message.");
-        //        return false;
-        //    }
-        //    token = token.Replace("Bearer ", "");
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var validationParameters = new TokenValidationParameters
-        //    {
-        //        ValidateIssuer = true,
-        //        ValidateAudience = true,
-        //        ValidateLifetime = true,
-        //        ValidateIssuerSigningKey = true,
-        //        ValidIssuer = _configuration["JWTAuth:ValidIssuerURL"],
-        //        ValidAudience = _configuration["JWTAuth:ValidAudienceURL"],
-        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"])),
-        //    };
-        //    var validationResult = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-        //    return validationResult.Identities.Any(_ => _.IsAuthenticated);
-        //}
     }
 }

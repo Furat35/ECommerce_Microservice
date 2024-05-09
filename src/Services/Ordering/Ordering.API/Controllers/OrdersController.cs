@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.Application.Features.Orders.Commands.DeleteOrder;
 using Ordering.Application.Features.Orders.Commands.UpdateOrder;
+using Ordering.Application.Features.Orders.Queries.GetOrderById;
 using Ordering.Application.Features.Orders.Queries.GetOrdersList;
+using Ordering.Application.Filters;
 using Ordering.Application.Helpers;
 using Ordering.Application.Models.Dtos.Orders;
+using Shared.Constants;
 
 namespace Ordering.API.Controllers
 {
@@ -23,23 +26,25 @@ namespace Ordering.API.Controllers
 
         [HttpGet(Name = "GetOrder")]
         [ProducesResponseType(typeof(IEnumerable<OrderListDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrders([FromQuery] OrderRequestFilter filters)
         {
-            var query = new GetOrdersListQuery(HttpContext.User.GetActiveUserId());
+            var query = new GetOrdersListQuery(HttpContext.User.GetActiveUserId(), filters);
             var orders = await _mediator.Send(query);
+
             return Ok(orders);
         }
 
-        //for testing
-        //[HttpPost(Name = "CheckoutOrder")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //public async Task<IActionResult> CheckoutOrder([FromBody] CheckoutOrderCommand command)
-        //{
-        //    var orderId = await _mediator.Send(command);
-        //    return Ok(new { OrderId = orderId });
-        //}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(string id)
+        {
+            var query = new GetOrderByIdQuery(id);
+            var order = await _mediator.Send(query);
+
+            return Ok(order);
+        }
 
         [HttpPut(Name = "UpdateOrder")]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
@@ -50,6 +55,7 @@ namespace Ordering.API.Controllers
         }
 
         [HttpDelete("{id}", Name = "DeleteOrder")]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]

@@ -5,9 +5,10 @@
 - Order.API => 10004
 - Shopping.Aggregator => 10005
 - Authentication.API => 10006
+- Payment.API => 10007
 
 // Gateway
 - OrderApiGw => 10010
 
 //UI
-- AspnetRunBasics => 10007
+- ECommerce.UI => 10011

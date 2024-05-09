@@ -12,7 +12,9 @@
         "orderapigw": "StartDebugging",
         "shopping.aggregator": "StartDebugging",
         "aspnetrunbasics": "StartDebugging",
-        "authentication.api": "StartDebugging"
+        "authentication.api": "StartDebugging",
+        "payment.api": "StartDebugging",
+        "ecommerce.ui": "StartDebugging"
       }
     }
   }

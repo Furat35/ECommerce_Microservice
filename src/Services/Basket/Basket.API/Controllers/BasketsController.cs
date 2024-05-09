@@ -2,6 +2,7 @@
 using Basket.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
 using Shared.Helpers;
 
 namespace Basket.API.Controllers
@@ -20,6 +21,7 @@ namespace Basket.API.Controllers
 
 
         [HttpGet(Name = "GetBasket")]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBasket()
         {
@@ -27,7 +29,8 @@ namespace Basket.API.Controllers
             return Ok(basket ?? new ShoppingCart());
         }
 
-        [HttpPost]
+        [HttpPut]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateBasket([FromBody] ShoppingCart basket)
         {
@@ -35,7 +38,17 @@ namespace Basket.API.Controllers
             return Ok(activeBasket);
         }
 
-        [HttpPost("remove/{productId}")]
+        [HttpPut("refresh")]
+        [Authorize(Roles = $"{Role.User}")]
+        [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RefreshBasket()
+        {
+            var basket = await _basketRepository.RefreshBasket(HttpContext.User.GetActiveUserId());
+            return Ok(basket);
+        }
+
+        [HttpDelete("remove/{productId}")]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
         public async Task<IActionResult> RemoveItemFromBasket(string productId)
         {
@@ -44,6 +57,7 @@ namespace Basket.API.Controllers
         }
 
         [HttpDelete(Name = "DeleteBasket")]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
         public async Task<IActionResult> RemoveBasket()
         {
@@ -51,7 +65,17 @@ namespace Basket.API.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]/{productId}")]
+        [Authorize(Roles = $"{Role.User}")]
+        [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
+        public async Task<IActionResult> DecreaseItemQuantity(string productId)
+        {
+            var activeBasket = await _basketRepository.DecreaseItemQuantityByOne(productId, HttpContext.User.GetActiveUserId());
+            return Ok(activeBasket);
+        }
+
         [HttpPost("[action]", Name = "CheckoutBasket")]
+        [Authorize(Roles = $"{Role.User}")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CheckoutBasket([FromBody] BasketCheckout basketCheckout)

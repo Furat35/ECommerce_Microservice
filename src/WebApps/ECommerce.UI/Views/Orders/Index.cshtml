@@ -1,0 +1,85 @@
+﻿@using System.Globalization
+@model (IEnumerable<ECommerce.UI.Models.Dtos.ViewModels.Orders.OrderListModel> orders, Metadata pagination)
+@{
+    ViewData["Title"] = "Siparişlerim";
+    CultureInfo turkishCulture = new CultureInfo("tr-TR");
+}
+
+
+<div class="container mt-5" style="margin-bottom:300px">
+    @if (Model.orders.Count() == 0)
+    {
+        <h1 style="text-align:center">Siparişiniz bulunmuyor</h1>
+        <div style="text-align:center;margin-bottom:380px;" class="mt-5">
+            <a asp-controller="Products" asp-action="GetProducts" class="btn btn-success">Alışverişe Devam Et</a>
+        </div>
+
+        return;
+    }
+    <div class="row">
+
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            @* <th scope="col"> </th> *@
+                            <th scope="col">Ad</th>
+                            <th scope="col">Soyad</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Adres</th>
+                            <th scope="col">Sipariş Detayları</th>
+                            <th scope="col" class="text-right">Toplam Tutar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var order in Model.orders)
+                        {
+                            <tr>
+                                @* <td><img src="https://dummyimage.com/50x50/55595c/fff" /></td> *@
+                                <td>@order.Name</td>
+                                <td>@order.Surname</td>
+                                <td>@order.Mail</td>
+                                <td>@order.Address.AddressLine, @order.Address.ZipCode, @order.Address.State, @order.Address.Country</td>
+                                <td><a class="btn btn-primary" asp-controller="Orders" asp-action="GetOrder" asp-route-orderId="@order.Id">Siparişi Görüntüle</a></td>
+                                <td class="text-right">@order.TotalPrice.ToString("N2", turkishCulture) TL</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mt-4">
+        <nav aria-label="...">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item @(!Model.pagination.HasPrevious ? "disabled" : null)">
+                    <a class="page-link" asp-action="GetProducts" asp-route-page="@(Model.pagination.CurrentPage - 1)" tabindex="-1">Önceki</a>
+                </li>
+
+                @if (Model.pagination.HasPrevious)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="GetProducts" asp-route-page="@(Model.pagination.CurrentPage - 1)" tabindex="-1">@(Model.pagination.CurrentPage - 1)</a>
+                    </li>
+                }
+
+                <li class="page-item active">
+                    <a class="page-link" href="#">@Model.pagination.CurrentPage <span class="sr-only">(Aktif)</span></a>
+                </li>
+
+                @if (Model.pagination.HasNext)
+                {
+                    <li class="page-item"><a class="page-link" asp-action="GetProducts" asp-route-page="@(Model.pagination.CurrentPage + 1)">@(Model.pagination.CurrentPage + 1)</a></li>
+                }
+
+                <li class="page-item @(!Model.pagination.HasNext ? "disabled" : null)">
+                    <a class="page-link" asp-action="GetProducts" asp-route-page="@(Model.pagination.CurrentPage + 1)" tabindex="-1">Sonraki</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+</div>

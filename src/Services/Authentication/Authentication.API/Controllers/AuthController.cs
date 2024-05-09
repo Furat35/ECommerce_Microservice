@@ -25,8 +25,8 @@ namespace Authentication.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginDto user)
         {
-            var token = await _authService.UserLoginAsync(user);
-            return Ok(new { Token = token });
+            var loginResponse = await _authService.UserLoginAsync(user);
+            return Ok(loginResponse);
         }
     }
 }

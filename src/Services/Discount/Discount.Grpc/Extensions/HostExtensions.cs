@@ -21,21 +21,26 @@ namespace Discount.Grpc.Extensions
                 {
                     Connection = connection
                 };
-                command.CommandText = "DROP TABLE IF EXISTS Coupon";
-                command.ExecuteNonQuery();
-                command.CommandText = "CREATE TABLE Coupon (Id SERIAL PRIMARY KEY ,"
-                                                                + "ProductId VARCHAR(24) NOT NULL,"
-                                                                + "Description TEXT,"
-                                                                + "Amount INT)";
-                command.ExecuteNonQuery();
+                command.CommandText = "SELECT COUNT(*) FROM Coupon";
+                var count = (long)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    command.CommandText = "DROP TABLE IF EXISTS Coupon";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "CREATE TABLE Coupon (Id SERIAL PRIMARY KEY ,"
+                                                                    + "ProductId VARCHAR(24) NOT NULL,"
+                                                                    + "Description TEXT,"
+                                                                    + "Amount FLOAT)";
+                    command.ExecuteNonQuery();
 
-                command.CommandText = "INSERT INTO Coupon(ProductId, Description, Amount) VALUES ('124','IPhone Discount', 150)";
-                command.ExecuteNonQuery();
+                    command.CommandText = "INSERT INTO Coupon(ProductId, Description, Amount) VALUES ('124','IPhone Discount', 150)";
+                    command.ExecuteNonQuery();
 
-                command.CommandText = "INSERT INTO Coupon(ProductId, Description, Amount) VALUES ('512','Samsung Discount', 100)";
-                command.ExecuteNonQuery();
+                    command.CommandText = "INSERT INTO Coupon(ProductId, Description, Amount) VALUES ('602d2149e773f2a3990b47f5','Samsung Discount', 100)";
+                    command.ExecuteNonQuery();
 
-                logger.LogInformation("Migrated postgresql database.");
+                    logger.LogInformation("Migrated postgresql database.");
+                }
             }
             catch (NpgsqlException ex)
             {

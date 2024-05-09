@@ -15,11 +15,11 @@ namespace Authentication.API.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<int> AddAsync(T entity)
         {
             _dbContext.Add(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            return await _dbContext.SaveChangesAsync();
+
         }
 
         public async Task<int> DeleteAsync(T entity)

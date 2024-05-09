@@ -33,11 +33,11 @@ services:
       context: .
       dockerfile: Services/Basket/Basket.API/Dockerfile
 
-  # discount.api:
-  #   image: ${DOCKER_REGISTRY-}discountapi
-  #   build:
-  #     context: .
-  #     dockerfile: services/Discount/Discount.API/Dockerfile
+  discount.api:
+    image: ${DOCKER_REGISTRY-}discountapi
+    build:
+      context: .
+      dockerfile: services/Discount/Discount.API/Dockerfile
 
   discount.grpc:
     image: ${DOCKER_REGISTRY-}discountgrpc
@@ -63,21 +63,29 @@ services:
       context: .
       dockerfile: ApiGateways/Shopping.Aggregator/Dockerfile
 
-  aspnetrunbasics:
-    image: ${DOCKER_REGISTRY-}aspnetrunbasics
-    build:
-      context: .
-      dockerfile: WebApps/AspnetRunBasics/Dockerfile
-
   authentication.api:
     image: ${DOCKER_REGISTRY-}authenticationapi
     build:
       context: .
       dockerfile: Services/Authentication/Authentication.API/Dockerfile
 
+  payment.api:
+    image: ${DOCKER_REGISTRY-}paymentapi
+    build:
+      context: .
+      dockerfile: Services/Payment/Payment.API/Dockerfile
+
+  ecommerce.ui:
+    image: ${DOCKER_REGISTRY-}ecommerceui
+    build:
+      context: .
+      dockerfile: WebApps/ECommerce.UI/Dockerfile
+
 volumes:
   mongo_data:
   postgres_data:
+
+
 
 
 

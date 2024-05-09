@@ -1,6 +1,0 @@
-@Shopping.Aggregator_HostAddress = http://localhost:5071
-
-GET {{Shopping.Aggregator_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

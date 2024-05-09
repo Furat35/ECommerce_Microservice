@@ -3,6 +3,7 @@ using Basket.API.ExternalApiCalls.Contracts;
 using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Discount.Grpc.Protos;
+using FluentValidation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -30,6 +31,9 @@ namespace Basket.API.Extensions
                 client.BaseAddress = new Uri(configuration["Catalog.Api"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
+            services.AddHttpClient<IPaymentExternalService, PaymentExternalService>(c =>
+                        c.BaseAddress = new Uri(configuration["Payment.Api"]));
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = configuration.GetValue<string>("CacheSettings:ConnectionString");

@@ -1,0 +1,79 @@
+﻿@using Shared.Constants
+@using Shared.Enums
+@model ECommerce.UI.Models.Dtos.ViewModels.Users.UserListModel
+
+@{
+    ViewData["Title"] = "Profilim";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container" style="margin-bottom:250px;margin-top:100px;">
+    <div id="accordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <strong>Kullanıcı Bilgileri</strong>
+                    </button>
+                </h5>
+            </div>
+            @if (User.IsInRole(Role.Admin))
+            {
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <form asp-controller="Users" asp-action="UpdateUserData" method="post">
+                            <div class="form-group">
+                                <label for="name">Ad</label>
+                                <input asp-for="Name" value="@Model.Name" type="text" class="form-control" id="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Soyad</label>
+                                <input asp-for="Surname" value="@Model.Surname" type="text" class="form-control" id="surname">
+                            </div>
+                            <div class="form-group">
+                                <label for="mail">Mail</label>
+                                <input asp-for="Mail" value="@Model.Mail" type="text" class="form-control" id="mail">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Telefon</label>
+                                <input asp-for="Phone" value="@Model.Phone" type="text" class="form-control" id="phone">
+                            </div>
+                            <div style="text-align:center;">
+                                <button type="submit" class="btn btn-primary mt-4 mb-4">Kullanıcı Bilgilerini Güncelle</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (User.IsInRole(Role.Admin))
+            {
+                <div class="card">
+                    <div class="card-header" id="headingFour">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <strong>Şifre Değiştir</strong>
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                        <div class="card-body">
+                            <form asp-controller="Users" asp-action="UpdateUserPassword" method="post">
+                                <div class="form-group">
+                                    <label for="addressLine">Yeni Şifre</label>
+                                    <input type="password" class="form-control" name="newPassword" id="newPassword">
+                                </div>
+                                <div style="text-align:center;">
+                                    <button type="submit" class="btn btn-primary mt-4 mb-4">Şifreyi Değiştir</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div style="text-align: center;margin-top:150px">
+            <a asp-controller="Admin" asp-action="Index" style="width: 300px;margin:auto;" class="btn btn-lg btn-block btn-success">Panele Dön</a>
+        </div>
+    </div>

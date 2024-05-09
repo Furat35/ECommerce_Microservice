@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Catalog.API.Entities;
-using Catalog.API.Models.Product;
+using Catalog.API.Models.Products;
 
 namespace Catalog.API.Mappings
 {

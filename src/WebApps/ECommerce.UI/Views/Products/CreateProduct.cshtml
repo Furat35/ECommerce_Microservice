@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Ürün Oluştur";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section Styles {
+    <style>
+
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        #createProduct {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        #createProduct div {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        #createProduct button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #createProduct button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+}
+
+<div class="container" style="margin-bottom:150px;margin-top:50px;">
+    <form method="post" asp-controller="Products" asp-action="CreateProduct" id="createProduct" enctype="multipart/form-data">
+        <div>
+            <label for="name">Ad</label>
+            <input type="text" id="name" name="Name" required>
+        </div>
+        <div>
+            <label for="categoryId">Kategori</label>
+            <div class="form-group">
+                @Html.DropDownList("CategoryId", ViewBag.Categories as SelectList, "Kategori Seç", new { @class = "form-control custom-dropdown" })
+            </div>
+        </div>
+        <div>
+            <label for="description">Açıklama</label>
+            <textarea id="description" name="Description" required></textarea>
+        </div>
+        <div>
+            <label for="summary">Ek Ürün Bilgisi</label>
+            <textarea id="summary" name="Summary" required></textarea>
+        </div>
+        <div>
+            <label for="imageFile">Fotoğraf</label>
+            <input type="file" id="imageFile" name="ImageFile" accept="image/*" required>
+        </div>
+        <div>
+            <label for="price">Fiyat</label>
+            <input type="number" id="price" name="Price" step="0.01" required>
+        </div>
+        <div style="text-align:center">
+            <button type="submit" >Oluştur</button>
+        </div>
+    </form>
+</div>
