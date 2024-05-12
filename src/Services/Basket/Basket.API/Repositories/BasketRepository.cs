@@ -1,5 +1,4 @@
 ﻿using Basket.API.Entities;
-using Basket.API.ExternalApiCalls;
 using Basket.API.ExternalApiCalls.Contracts;
 using Basket.API.GrpcServices;
 using EventBus.Message.Events;
@@ -100,7 +99,7 @@ namespace Basket.API.Repositories
             var userId = _httpContextAccessor.HttpContext.User.GetActiveUserId();
             var basket = await RefreshBasket(userId);
             var paymentIsSuccess = await _paymentExternalService.ProcessPayment();
-            if(paymentIsSuccess)
+            if (paymentIsSuccess)
             {
 
                 var eventMessage = new BasketCheckoutEvent

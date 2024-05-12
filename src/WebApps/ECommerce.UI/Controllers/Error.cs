@@ -1,6 +1,5 @@
 ﻿using ECommerce.UI.Models;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -17,8 +16,8 @@ namespace ECommerce.UI.Controllers
             var val = (int)statusCode;
             ErrorDetail errorDetails = new()
             {
-               ErrorMessage = exception.Message,
-               StatusCode = (int)statusCode
+                ErrorMessage = exception.Message,
+                StatusCode = (int)statusCode
             };
 
             return View(errorDetails);

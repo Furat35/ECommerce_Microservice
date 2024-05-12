@@ -59,6 +59,8 @@ services:
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
       - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+      - "GrpcSettings:DiscountUrl=http://discount.grpc:8080"
+      - "FileSettings:ImagePath=/app/wwwroot/uploads"
     depends_on:
       - catalogdb
     ports:
@@ -71,6 +73,8 @@ services:
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
       - "GrpcSettings:DiscountUrl=http://discount.grpc:8080"
+      -  "Catalog.Api:http://catalog.api:8080"
+      -  "Payment.Api:http://payment.api:8080"
     depends_on:
       - basketdb
       - rabbitmq
@@ -131,7 +135,7 @@ services:
   orderapigw:
     container_name: orderapigw
     environment:
-      - ASPNETCORE_ENVIRONMENT=Local
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_HTTP_PORTS=8080
     depends_on:
       - catalog.api

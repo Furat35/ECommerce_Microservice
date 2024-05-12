@@ -15,6 +15,6 @@
     <PackageReference Include="Ocelot.Cache.CacheManager" Version="22.0.1" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties ocelot_1local_1json__JsonSchema="https://cdn.subsquid.io/schemas/squid_manifest.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

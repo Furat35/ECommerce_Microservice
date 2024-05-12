@@ -3,13 +3,21 @@ namespace Catalog.API.Services
 {
     public class FileService : IFileService
     {
+        private readonly string _baseFilePath;
+
+        public FileService(IConfiguration configuration)
+        {
+            _baseFilePath = configuration["FileSettings:ImagePath"];
+        }
+
         public async Task<string> UploadFile(string folderNameToUpload, IFormFile file)
         {
             if (file == null || file.Length == 0)
                 throw new ArgumentException("Geçersiz dosya");
 
             var currentDirectory = Directory.GetCurrentDirectory();
-            var uploadsFolder = Path.Combine(currentDirectory, "wwwroot", "uploads", folderNameToUpload);
+
+            var uploadsFolder = Path.Combine(_baseFilePath, folderNameToUpload);
 
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
@@ -22,7 +30,7 @@ namespace Catalog.API.Services
                 await file.CopyToAsync(fileStream);
             }
 
-            return Path.Combine("wwwroot", "uploads", folderNameToUpload, uniqueFileName);
+            return Path.Combine(_baseFilePath, folderNameToUpload, uniqueFileName);
         }
 
         public void RemoveFile(string filePath)
@@ -30,8 +38,7 @@ namespace Catalog.API.Services
             if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(filePath))
                 throw new ArgumentException("Geçersiz dosya adı");
 
-            var currentDirectory = Directory.GetCurrentDirectory();
-            var fileToDelete = Path.Combine(currentDirectory, filePath);
+            var fileToDelete = Path.Combine(filePath);
 
             if (File.Exists(fileToDelete))
                 File.Delete(fileToDelete);
@@ -46,9 +53,7 @@ namespace Catalog.API.Services
                 throw new ArgumentException("Invalid file name");
             }
 
-            var currentDirectory = Directory.GetCurrentDirectory();
-            var fileToGet = Path.Combine(currentDirectory, filePath);
-
+            var fileToGet = Path.Combine(filePath);
             if (File.Exists(fileToGet))
             {
                 return Convert.ToBase64String(File.ReadAllBytes(fileToGet));
