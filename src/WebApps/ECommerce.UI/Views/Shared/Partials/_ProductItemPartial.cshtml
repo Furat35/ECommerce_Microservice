@@ -7,7 +7,7 @@
     CultureInfo turkishCulture = new CultureInfo("tr-TR");
 }
 
-<div class="card mt-2" style="@(User.IsInRole(Role.Admin) ? "height:350px" : "height:400px");box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);">
+<div class="card mt-2" style="@(User.IsInRole(Role.Admin) || !User.Identity.IsAuthenticated ? "height:350px" : "height:400px");box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);">
     <img asp-append-version="true" height="150px" class="card-img-top" src="@(@Model.ImageFile != null ? "data:image/jpeg;base64," + @Model.ImageFile : "https://dummyimage.com/250x250/55595c/fff")" />
     <div class="card-body">
         <h4 class="card-title" style="height:30px;">

@@ -5,16 +5,11 @@ using Shared.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiServices(builder.Configuration);
-Console.WriteLine(builder.Configuration["ConnectionStrings:AuthenticationConnectionString"] + "------");
+Console.WriteLine($"------------------- {builder.Environment.EnvironmentName}");
+Console.WriteLine("--------------------" + builder.Configuration["ConnectionStrings:AuthenticationConnectionString"]);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
- 
-}
 app.MigrateDatabase<AuthenticationContext>((context, services) =>
 {
     var logger = services.GetService<ILogger<AuthenticationContextSeed>>();

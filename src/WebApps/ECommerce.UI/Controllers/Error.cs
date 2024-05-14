@@ -11,13 +11,11 @@ namespace ECommerce.UI.Controllers
         {
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionHandlerPathFeature?.Error;
-            HttpStatusCode statusCode = (HttpStatusCode)exception.GetType().GetProperty("StatusCode").GetValue(exception);
-            object test;
-            var val = (int)statusCode;
+            HttpStatusCode? statusCode = (HttpStatusCode)exception?.GetType()?.GetProperty("StatusCode")?.GetValue(exception);
             ErrorDetail errorDetails = new()
             {
                 ErrorMessage = exception.Message,
-                StatusCode = (int)statusCode
+                StatusCode = statusCode != null ? (int)statusCode : 0
             };
 
             return View(errorDetails);

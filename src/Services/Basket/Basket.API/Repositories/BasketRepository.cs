@@ -137,7 +137,6 @@ namespace Basket.API.Repositories
                     });
                 });
 
-                eventMessage.TotalPrice = basket.TotalPrice;
                 await _publishEndpoint.Publish(eventMessage);
                 await DeleteBasket(userId);
             }

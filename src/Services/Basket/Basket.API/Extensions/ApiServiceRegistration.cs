@@ -20,8 +20,6 @@ namespace Basket.API.Extensions
             {
                 opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = false;
             });
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<ICatalogExternalService, CatalogExternalService>();
             services.AddScoped<DiscountGrpcService>();

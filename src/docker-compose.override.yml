@@ -73,8 +73,8 @@ services:
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
       - "GrpcSettings:DiscountUrl=http://discount.grpc:8080"
-      -  "Catalog.Api:http://catalog.api:8080"
-      -  "Payment.Api:http://payment.api:8080"
+      -  "Catalog.Api=http://catalog.api:8080"
+      -  "Payment.Api=http://payment.api:8080"
     depends_on:
       - basketdb
       - rabbitmq

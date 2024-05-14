@@ -3,15 +3,12 @@ using Shared.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine($"------------------- {builder.Environment.EnvironmentName}");
+Console.WriteLine("--------------------" + builder.Configuration["DatabaseSettings:ConnectionString"]);
+
 builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseCustomExceptionHandling();
 
