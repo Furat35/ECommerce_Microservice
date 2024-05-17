@@ -21,8 +21,6 @@ namespace Catalog.API.Extensions
             {
                 configure.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
             });
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
             services.AddScoped<ICatalogContext, CatalogContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();

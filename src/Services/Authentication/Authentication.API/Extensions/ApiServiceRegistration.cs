@@ -18,8 +18,6 @@ namespace Authentication.API.Extensions
         {
             // DI Services
             services.AddControllers();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordGenerationService, PasswordGenerationService>();
             services.AddScoped<IAuthService, AuthService>();

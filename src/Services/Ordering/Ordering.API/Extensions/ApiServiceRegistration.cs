@@ -14,8 +14,6 @@ namespace Ordering.API.Extensions
         public static void AddApiServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMassTransit(config =>
             {

@@ -13,8 +13,6 @@ namespace Discount.API.Extensions
         {
             services.AddControllers();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
 
             // Authentication
             services.AddAuthentication(options =>

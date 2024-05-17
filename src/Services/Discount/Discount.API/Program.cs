@@ -7,13 +7,6 @@ builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
 
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseCustomExceptionHandling();
 
 app.UseAuthentication();
