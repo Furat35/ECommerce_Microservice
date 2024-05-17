@@ -1,6 +1,7 @@
 ﻿@model ECommerce.UI.Models.Dtos.ViewModels.Baskets.ShoppingCartModel
 @{
     ViewData["Title"] = "Sepet";
+    int i = 0;
 }
 <div class="container mt-5" style="margin-bottom:250px">
     @if (Model.Items.Count == 0)
@@ -18,7 +19,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col"> </th>
+                            <th scope="col" class="text-center">#</th>
                             <th scope="col" class="text-center">Ürün</th>
                             <th scope="col" class="text-center">Adet</th>
                             <th scope="col" class="text-center">Birim Fiyat</th>
@@ -32,8 +33,8 @@
                         @foreach (var cartItem in Model.Items)
                         {
                             <tr>
-                                <td><img src="https://dummyimage.com/50x50/55595c/fff" /></td>
-                                <td>@cartItem.ProductName</td>
+                                <td class="text-center">@(++i)</td>
+                                <td class="text-center">@cartItem.ProductName</td>
                                 <td class="text-center">@cartItem.Quantity</td>
                                 <th class="text-center" style="font-weight:normal;">@cartItem.Price TL</th>
                                 <td class="text-center"><strong>@(cartItem.Price * cartItem.Quantity) TL</strong></td>
