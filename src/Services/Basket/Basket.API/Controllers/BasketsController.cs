@@ -10,6 +10,7 @@ namespace Basket.API.Controllers
     [Route("api/v1/[controller]")]
     [Authorize]
     [ApiController]
+    //todo: Needs one more database except redis
     public class BasketsController : ControllerBase
     {
         private readonly IBasketRepository _basketRepository;

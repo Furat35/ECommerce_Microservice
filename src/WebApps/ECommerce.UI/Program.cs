@@ -31,6 +31,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");
 
+
 app.MapDefaultControllerRoute();
 
 app.Run();

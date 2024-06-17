@@ -8,10 +8,7 @@ builder.Services.AddGrpcServices(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MigrateDatabase<Program>();
-}
+app.MigrateDatabase<Program>();
 
 app.UseCustomExceptionHandling();
 app.MapGrpcService<DiscountService>();

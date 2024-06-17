@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Ordering.Application.Features.Orders.Commands.DeleteOrder;
 using Ordering.Application.Features.Orders.Commands.UpdateOrder;
 using Ordering.Application.Features.Orders.Queries.GetOrderById;
@@ -9,6 +10,16 @@ using Ordering.Application.Filters;
 using Ordering.Application.Helpers;
 using Ordering.Application.Models.Dtos.Orders;
 using Shared.Constants;
+
+class MyClass
+{
+    private int MyField;
+    public int MyProperty { get; set; }
+    public void MyMethod()
+    {
+
+    }
+}
 
 namespace Ordering.API.Controllers
 {

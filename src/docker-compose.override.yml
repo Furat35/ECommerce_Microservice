@@ -58,9 +58,9 @@ services:
     container_name: catalog.api
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
-      - "GrpcSettings:DiscountUrl=http://discount.grpc:8080"
-      - "FileSettings:ImagePath=/app/wwwroot/uploads"
+      - "DatabaseSettings__ConnectionString=mongodb://catalogdb:27017"
+      - "GrpcSettings__DiscountUrl=http://discount.grpc:8080"
+      - "FileSettings__ImagePath=/app/wwwroot/uploads"
     depends_on:
       - catalogdb
     ports:
@@ -70,9 +70,9 @@ services:
     container_name: basket.api
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "CacheSettings:ConnectionString=basketdb:6379"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
-      - "GrpcSettings:DiscountUrl=http://discount.grpc:8080"
+      - "CacheSettings__ConnectionString=basketdb:6379"
+      - "EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "GrpcSettings__DiscountUrl=http://discount.grpc:8080"
       -  "Catalog.Api=http://catalog.api:8080"
       -  "Payment.Api=http://payment.api:8080"
     depends_on:
@@ -86,7 +86,7 @@ services:
     container_name: discount.api
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User ID=admin;Password=admin123;"
+      - "DatabaseSettings__ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User ID=admin;Password=admin123;"
     depends_on:
       - discountdb
     ports:
@@ -96,7 +96,7 @@ services:
     container_name: discountgrpc
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User ID=admin;Password=admin123;"
+      - "DatabaseSettings__ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User ID=admin;Password=admin123;"
     depends_on:
       - discountdb
     ports:
@@ -106,8 +106,8 @@ services:
     container_name: ordering.api
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:OrderingConnectionString=Server=orderdb,1433;Database=OrderDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ConnectionStrings__OrderingConnectionString=Server=orderdb,1433;Database=OrderDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
+      - "EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672"
     depends_on: 
       - orderdb
       - rabbitmq 
@@ -117,8 +117,9 @@ services:
   authentication.api:
     container_name: authentication.api
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:AuthenticationConnectionString=Server=userdb,1433;Database=UsersDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
+      - "ConnectionStrings__AuthenticationConnectionString=Server=userdb,1433;Database=UsersDb;User Id=sa;Password=Firat3521;TrustServerCertificate=True;"
     ports:
       - "5006:8080"
     depends_on:
@@ -150,9 +151,9 @@ services:
     container_name: shopping.aggregator
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ApiSettings:CatalogUrl=http://catalog.api:8080"
-      - "ApiSettings:BasketUrl=http://basket.api:8080"
-      - "ApiSettings:OrderingUrl=http://ordering.api:8080"
+      - "ApiSettings__CatalogUrl=http://catalog.api:8080"
+      - "ApiSettings__BasketUrl=http://basket.api:8080"
+      - "ApiSettings__OrderingUrl=http://ordering.api:8080"
     depends_on:
       - catalog.api
       - basket.api
@@ -165,7 +166,7 @@ services:
     container_name: ecommerce.ui
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ApiSettings:GatewayAddress=http://orderapigw:8080"
+      - "ApiSettings__GatewayAddress=http://orderapigw:8080"
     depends_on:
       - orderapigw
       - catalog.api
