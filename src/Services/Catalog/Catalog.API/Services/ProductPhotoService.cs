@@ -3,16 +3,10 @@ using Catalog.API.Services.Contracts;
 
 namespace Catalog.API.Services
 {
-    public class ProductPhotoService : IProductPhotoService
+    public class ProductPhotoService(IHttpContextAccessor httpContextAccessor, IFileService fileService) : IProductPhotoService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IFileService _fileService;
-
-        public ProductPhotoService(IHttpContextAccessor httpContextAccessor, IFileService fileService)
-        {
-            _httpContextAccessor = httpContextAccessor;
-            _fileService = fileService;
-        }
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IFileService _fileService = fileService;
 
         public bool RemoveProductPhoto(Product product)
         {

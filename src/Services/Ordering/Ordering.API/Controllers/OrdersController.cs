@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Ordering.Application.Features.Orders.Commands.DeleteOrder;
 using Ordering.Application.Features.Orders.Commands.UpdateOrder;
 using Ordering.Application.Features.Orders.Queries.GetOrderById;
@@ -11,29 +10,14 @@ using Ordering.Application.Helpers;
 using Ordering.Application.Models.Dtos.Orders;
 using Shared.Constants;
 
-class MyClass
-{
-    private int MyField;
-    public int MyProperty { get; set; }
-    public void MyMethod()
-    {
-
-    }
-}
-
 namespace Ordering.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrdersController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public OrdersController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        private readonly IMediator _mediator = mediator;
 
         [HttpGet(Name = "GetOrder")]
         [ProducesResponseType(typeof(IEnumerable<OrderListDto>), StatusCodes.Status200OK)]

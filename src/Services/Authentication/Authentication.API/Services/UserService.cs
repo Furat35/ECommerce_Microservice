@@ -8,40 +8,24 @@ using Authentication.API.Models.Dtos.User;
 using Authentication.API.Models.Dtos.Users;
 using Authentication.API.Services.Contracts;
 using AutoMapper;
-using FluentValidation;
 using Shared.Exceptions;
-using Shared.Extensions;
 using Shared.Helpers;
+using Shared.Helpers.interfaces;
 using System.Text;
 
 namespace Authentication.API.Services
 {
-    public class UserService : RepositoryBase<User>, IUserService
+    public class UserService(AuthenticationContext context, IMapper mapper, IPasswordGenerationService passwordGenerationService,
+        IHttpContextAccessor httpContextAccessor, ICustomFluentValidationErrorHandling customValidator) : RepositoryBase<User>(context), IUserService
     {
-        private readonly IMapper _mapper;
-        private readonly IPasswordGenerationService _passwordGenerationService;
-        private readonly string _activeUserId;
-        private readonly IValidator<UserAddDto> _userAddDtoValidator;
-        private readonly IValidator<UserUpdateDto> _userUpdateDtoValidator;
-        private readonly IValidator<AddressAddDto> _addressAddDtoValidator;
-        private readonly IValidator<PaymentCardAddDto> _paymentCardAddDtoValidator;
-
-        public UserService(AuthenticationContext context, IMapper mapper, IPasswordGenerationService passwordGenerationService,
-            IHttpContextAccessor httpContextAccessor, IValidator<UserAddDto> userAddDtoValidator, IValidator<AddressAddDto> addressAddDtoValidator,
-            IValidator<PaymentCardAddDto> paymentCardAddDtoValidator, IValidator<UserUpdateDto> userUpdateDtoValidator) : base(context)
-        {
-            _mapper = mapper;
-            _passwordGenerationService = passwordGenerationService;
-            _activeUserId = httpContextAccessor.HttpContext.User.GetActiveUserId(); // todo : throws exception??
-            _userAddDtoValidator = userAddDtoValidator;
-            _addressAddDtoValidator = addressAddDtoValidator;
-            _paymentCardAddDtoValidator = paymentCardAddDtoValidator;
-            _userUpdateDtoValidator = userUpdateDtoValidator;
-        }
+        private readonly IMapper _mapper = mapper;
+        private readonly IPasswordGenerationService _passwordGenerationService = passwordGenerationService;
+        private readonly ICustomFluentValidationErrorHandling _customValidator = customValidator;
+        private readonly string _activeUserId = httpContextAccessor.HttpContext.User.GetActiveUserId();
 
         public async Task<bool> AddUserAsync(UserAddDto user)
         {
-            await UserAddDtoValidator(user);
+            await _customValidator.ValidateAndThrowAsync(user);
             var userToAdd = _mapper.Map<User>(user);
 
             var generatePassword = GeneratePasswordHash(user.Password);
@@ -64,7 +48,7 @@ namespace Authentication.API.Services
 
         public async Task<bool> UpdateAddressAsync(AddressAddDto address)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(address, _addressAddDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(address);
             var user = await GetByIdAsync(Guid.Parse(_activeUserId), [_ => _.Address]);
             if (user.Address is null)
                 user.Address = new Address();
@@ -75,7 +59,7 @@ namespace Authentication.API.Services
 
         public async Task<bool> UpdatePaymentCardAsync(PaymentCardAddDto paymentCard)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(paymentCard, _paymentCardAddDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(paymentCard);
             var user = (await GetAsync(_ => _.Id == Guid.Parse(_activeUserId), [_ => _.PaymentCard])).FirstOrDefault();
             if (user.PaymentCard is null)
                 user.PaymentCard = new PaymentCard();
@@ -86,7 +70,7 @@ namespace Authentication.API.Services
 
         public async Task<bool> UpdateDataAsync(UserUpdateDto userDto, string userId)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(userDto, _userUpdateDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(userDto);
             var user = await GetByIdAsync(Guid.Parse(userId));
             if (user is null)
                 throw new NotFoundException("Kullanıcı bulunamadı!");
@@ -135,17 +119,6 @@ namespace Authentication.API.Services
             string storedHashedPassword = Convert.ToBase64String(hashedBytes);
 
             return (storedSalt, storedHashedPassword);
-        }
-
-        private async Task UserAddDtoValidator(UserAddDto user)
-        {
-            var userState = await _userAddDtoValidator.ValidateAsync(user);
-            if (!userState.IsValid)
-                throw new BadRequestException(userState.Errors.First().ErrorMessage);
-            if (user.Address != null)
-                await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(user.Address, _addressAddDtoValidator);
-            if (user.PaymentCard != null)
-                await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(user.PaymentCard, _paymentCardAddDtoValidator);
         }
     }
 }

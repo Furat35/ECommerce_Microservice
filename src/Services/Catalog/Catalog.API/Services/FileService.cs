@@ -1,14 +1,9 @@
 ﻿using Catalog.API.Services.Contracts;
 namespace Catalog.API.Services
 {
-    public class FileService : IFileService
+    public class FileService(IConfiguration configuration) : IFileService
     {
-        private readonly string _baseFilePath;
-
-        public FileService(IConfiguration configuration)
-        {
-            _baseFilePath = configuration["FileSettings:ImagePath"];
-        }
+        private readonly string _baseFilePath = configuration["FileSettings:ImagePath"];
 
         public async Task<string> UploadFile(string folderNameToUpload, IFormFile file)
         {

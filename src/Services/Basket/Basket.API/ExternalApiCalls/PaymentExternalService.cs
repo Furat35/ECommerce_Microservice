@@ -3,16 +3,10 @@ using System.Text.Json;
 
 namespace Basket.API.ExternalApiCalls
 {
-    public class PaymentExternalService : IPaymentExternalService
+    public class PaymentExternalService(HttpClient client, IHttpContextAccessor context) : IPaymentExternalService
     {
-        private readonly HttpClient _client;
-        private readonly IHttpContextAccessor _context;
-
-        public PaymentExternalService(HttpClient client, IHttpContextAccessor context)
-        {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _context = context;
-        }
+        private readonly HttpClient _client = client ?? throw new ArgumentNullException(nameof(client));
+        private readonly IHttpContextAccessor _context = context;
 
         public async Task<bool> ProcessPayment()
         {

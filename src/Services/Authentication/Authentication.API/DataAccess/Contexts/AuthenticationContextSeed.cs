@@ -16,8 +16,8 @@ namespace Authentication.API.DataAccess.Contexts
 
         private static List<User> AddUsers()
         {
-            return new List<User>
-            {
+            return
+            [
                 new User{ Name = "firat", Surname = "ortaç", Mail = "furat@gmail.com", Phone = "537536525", Password = "lRhUNqp28FWSplbWlkOnMmIT8T+crvG4knRutYdIRAM=", PasswordSalt = "4FdIJ0kqSFE3vkLL2z4zzg==", Role = Enums.Role.User,
                     CreatedDate = DateTime.Now, CreatedBy = "firat",IsDeleted = false, LastModifiedBy = "firat", LastModifiedDate = DateTime.Now,
                     Address = new Address
@@ -46,7 +46,7 @@ namespace Authentication.API.DataAccess.Contexts
                         LastModifiedDate = DateTime.Now
                     }
                 }
-            };
+            ];
         }
     }
 }

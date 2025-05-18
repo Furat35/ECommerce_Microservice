@@ -6,14 +6,9 @@ using System.Linq.Expressions;
 
 namespace Authentication.API.DataAccess.Repositories
 {
-    public class RepositoryBase<T> : IAsyncRepository<T> where T : EntityBase
+    public class RepositoryBase<T>(AuthenticationContext dbContext) : IAsyncRepository<T> where T : EntityBase
     {
-        protected readonly AuthenticationContext _dbContext;
-
-        public RepositoryBase(AuthenticationContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        protected readonly AuthenticationContext _dbContext = dbContext;
 
         public async Task<int> AddAsync(T entity)
         {

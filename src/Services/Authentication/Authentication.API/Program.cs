@@ -5,8 +5,6 @@ using Shared.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiServices(builder.Configuration);
-Console.WriteLine($"------------------- {builder.Environment.EnvironmentName}");
-Console.WriteLine("--------------------" + builder.Configuration["ConnectionStrings:AuthenticationConnectionString"]);
 
 var app = builder.Build();
 
@@ -17,6 +15,7 @@ app.MigrateDatabase<AuthenticationContext>((context, services) =>
     .SeedAsync(context)
     .Wait();
 }, retryCount: 7);
+
 app.UseCustomExceptionHandling();
 
 app.UseAuthentication();

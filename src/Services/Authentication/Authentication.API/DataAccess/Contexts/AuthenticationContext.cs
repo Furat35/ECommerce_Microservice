@@ -6,14 +6,9 @@ using System.Reflection;
 
 namespace Authentication.API.DataAccess.Contexts
 {
-    public class AuthenticationContext : DbContext
+    public class AuthenticationContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public AuthenticationContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : base(options)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

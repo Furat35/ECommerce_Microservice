@@ -7,6 +7,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Helpers;
+using Shared.Helpers.interfaces;
 using System.Reflection;
 using System.Text;
 
@@ -33,6 +35,7 @@ namespace Authentication.API.Extensions
                     opt.EnableRetryOnFailure();
                 });
             });
+            services.AddScoped<ICustomFluentValidationErrorHandling, CustomFluentValidationErrorHandling>();
 
             // Authentication
             services.AddAuthentication(options =>

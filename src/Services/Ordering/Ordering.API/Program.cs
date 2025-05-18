@@ -5,8 +5,6 @@ using Ordering.Infrastructure.Persistence;
 using Shared.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-Console.WriteLine($"------------------- {builder.Environment.EnvironmentName}");
-Console.WriteLine($"------------------- {builder.Configuration["ConnectionStrings:OrderingConnectionString"]}");
 builder.Services.AddApiServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);

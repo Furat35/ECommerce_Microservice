@@ -11,15 +11,9 @@ namespace Basket.API.Controllers
     [Authorize]
     [ApiController]
     //todo: Needs one more database except redis
-    public class BasketsController : ControllerBase
+    public class BasketsController(IBasketRepository basketRepository) : ControllerBase
     {
-        private readonly IBasketRepository _basketRepository;
-
-        public BasketsController(IBasketRepository basketRepository)
-        {
-            _basketRepository = basketRepository;
-        }
-
+        private readonly IBasketRepository _basketRepository = basketRepository;
 
         [HttpGet(Name = "GetBasket")]
         [Authorize(Roles = $"{Role.User}")]

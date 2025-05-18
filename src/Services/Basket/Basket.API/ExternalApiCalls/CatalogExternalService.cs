@@ -3,13 +3,9 @@ using Basket.API.Models.ExternalApiResponseDtos;
 
 namespace Basket.API.ExternalApiCalls
 {
-    public class CatalogExternalService : ICatalogExternalService
+    public class CatalogExternalService(IHttpClientFactory httpClientFactory) : ICatalogExternalService
     {
-        private readonly HttpClient _httpClient;
-        public CatalogExternalService(IHttpClientFactory httpClientFactory)
-        {
-            _httpClient = httpClientFactory.CreateClient("Catalog.Api");
-        }
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Catalog.Api");
 
         public async Task<ProductListDto> GetProductById(string productId)
         {

@@ -13,14 +13,9 @@ namespace Authentication.API.Controllers
     [Route("api/v1/[controller]")]
     [Authorize]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        public UsersController(IUserService userService)
-        {
-            _userService = userService;
-        }
+        private readonly IUserService _userService = userService;
 
         [HttpPut("data")]
         [Authorize(Roles = $"{Role.User}")]

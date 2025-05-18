@@ -6,44 +6,29 @@ using Catalog.API.Helpers.Filters.Products;
 using Catalog.API.Models.Products;
 using Catalog.API.Repositories.Contracts;
 using Catalog.API.Services.Contracts;
-using FluentValidation;
 using MongoDB.Driver;
 using Shared.Exceptions;
-using Shared.Extensions;
 using Shared.Helpers;
+using Shared.Helpers.interfaces;
 
 namespace Catalog.API.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository(ICatalogContext catalogContext, IHttpContextAccessor httpContext, IMapper mapper, IProductPhotoService productPhotoService,
+        ICustomFluentValidationErrorHandling customValidator, ICategoryRepository categoryRepository,
+        IFileService fileService, DiscountGrpcService discountGrpcService) : IProductRepository
     {
-        private readonly ICatalogContext _catalogContext;
-        private readonly IHttpContextAccessor _httpContext;
-        private readonly IMapper _mapper;
-        private readonly IProductPhotoService _productPhotoService;
-        private readonly IValidator<ProductAddDto> _productAddDtoValidator;
-        private readonly IValidator<ProductUpdateDto> _productUpdateDtoValidator;
-        private readonly ICategoryRepository _categoryRepository;
-        private readonly IFileService _fileService;
-        private readonly DiscountGrpcService _discountGrpcService;
-
-        public ProductRepository(ICatalogContext catalogContext, IHttpContextAccessor httpContext, IMapper mapper, IProductPhotoService productPhotoService,
-            IValidator<ProductAddDto> productAddDtoValidator, IValidator<ProductUpdateDto> productUpdateDtoValidator, ICategoryRepository categoryRepository,
-            IFileService fileService, DiscountGrpcService discountGrpcService)
-        {
-            _catalogContext = catalogContext;
-            _httpContext = httpContext;
-            _mapper = mapper;
-            _productPhotoService = productPhotoService;
-            _productAddDtoValidator = productAddDtoValidator;
-            _productUpdateDtoValidator = productUpdateDtoValidator;
-            _categoryRepository = categoryRepository;
-            _fileService = fileService;
-            _discountGrpcService = discountGrpcService;
-        }
+        private readonly ICatalogContext _catalogContext = catalogContext;
+        private readonly IHttpContextAccessor _httpContext = httpContext;
+        private readonly IMapper _mapper = mapper;
+        private readonly IProductPhotoService _productPhotoService = productPhotoService;
+        private readonly ICustomFluentValidationErrorHandling _customValidator = customValidator;
+        private readonly ICategoryRepository _categoryRepository = categoryRepository;
+        private readonly IFileService _fileService = fileService;
+        private readonly DiscountGrpcService _discountGrpcService = discountGrpcService;
 
         public async Task<string> CreateProductAsync(ProductAddDto product)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(product, _productAddDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(product);
             await _categoryRepository.GetCategoryAsync(product.CategoryId); // throws error if category doesn't exist
             var productToAdd = _mapper.Map<Product>(product);
             productToAdd.CreatedDate = DateTime.UtcNow;
@@ -128,7 +113,7 @@ namespace Catalog.API.Repositories
 
         public async Task<bool> UpdateProductAsync(ProductUpdateDto product)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(product, _productUpdateDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(product);
             var productToUpdate = await GetProductById(product.Id);
             _mapper.Map(product, productToUpdate);
             var updateResult = await _catalogContext

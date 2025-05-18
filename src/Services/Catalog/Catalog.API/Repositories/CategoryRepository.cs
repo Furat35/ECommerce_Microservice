@@ -4,35 +4,24 @@ using Catalog.API.Entities;
 using Catalog.API.Helpers.Filters.Categories;
 using Catalog.API.Models.Categories;
 using Catalog.API.Repositories.Contracts;
-using FluentValidation;
 using MongoDB.Driver;
 using Shared.Exceptions;
-using Shared.Extensions;
 using Shared.Helpers;
+using Shared.Helpers.interfaces;
 
 namespace Catalog.API.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository(ICatalogContext catalogContext, IHttpContextAccessor httpContext, IMapper mapper,
+        ICustomFluentValidationErrorHandling customValidator) : ICategoryRepository
     {
-        private readonly ICatalogContext _catalogContext;
-        private readonly IHttpContextAccessor _httpContext;
-        private readonly IMapper _mapper;
-        private readonly IValidator<CategoryAddDto> _categoryAddDtoValidator;
-        private readonly IValidator<CategoryUpdateDto> _categoryUpdateDtoValidator;
-
-        public CategoryRepository(ICatalogContext catalogContext, IHttpContextAccessor httpContext, IMapper mapper,
-            IValidator<CategoryAddDto> categoryAddDtoValidator, IValidator<CategoryUpdateDto> categoryUpdateDtoValidator)
-        {
-            _catalogContext = catalogContext;
-            _httpContext = httpContext;
-            _mapper = mapper;
-            _categoryAddDtoValidator = categoryAddDtoValidator;
-            _categoryUpdateDtoValidator = categoryUpdateDtoValidator;
-        }
+        private readonly ICatalogContext _catalogContext = catalogContext;
+        private readonly IHttpContextAccessor _httpContext = httpContext;
+        private readonly IMapper _mapper = mapper;
+        private readonly ICustomFluentValidationErrorHandling _customValidator = customValidator;
 
         public async Task CreateCategoryAsync(CategoryAddDto category)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(category, _categoryAddDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(category);
             var categoryToAdd = _mapper.Map<Category>(category);
             await _catalogContext.Categories.InsertOneAsync(categoryToAdd);
         }
@@ -81,7 +70,7 @@ namespace Catalog.API.Repositories
 
         public async Task<bool> UpdateCategoryAsync(CategoryUpdateDto category)
         {
-            await CustomFluentValidationErrorHandling.ValidateAndThrowAsync(category, _categoryUpdateDtoValidator);
+            await _customValidator.ValidateAndThrowAsync(category);
             var categoryToUpdate = await GetCategoryById(category.CategoryId);
             _mapper.Map(category, categoryToUpdate);
             var updateResult = await _catalogContext

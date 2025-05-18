@@ -9,14 +9,9 @@ namespace Discount.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class DiscountsController : ControllerBase
+    public class DiscountsController(IDiscountRepository discountRepository) : ControllerBase
     {
-        private readonly IDiscountRepository _discountRepository;
-
-        public DiscountsController(IDiscountRepository discountRepository)
-        {
-            _discountRepository = discountRepository;
-        }
+        private readonly IDiscountRepository _discountRepository = discountRepository;
 
         [HttpGet("{discountId}", Name = "GetDiscount")]
         [ProducesResponseType(typeof(Coupon), StatusCodes.Status200OK)]

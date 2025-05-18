@@ -10,14 +10,9 @@ namespace Catalog.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CatalogsController : ControllerBase
+    public class CatalogsController(IProductRepository productRepository) : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
-
-        public CatalogsController(IProductRepository productRepository)
-        {
-            _productRepository = productRepository;
-        }
+        private readonly IProductRepository _productRepository = productRepository;
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]

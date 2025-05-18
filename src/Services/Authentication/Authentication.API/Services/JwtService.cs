@@ -6,14 +6,9 @@ using System.Text;
 
 namespace Authentication.API.Services
 {
-    public class JwtService : ITokenService
+    public class JwtService(IConfiguration configuration) : ITokenService
     {
-        private readonly IConfiguration _configuration;
-
-        public JwtService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private readonly IConfiguration _configuration = configuration;
 
         public JwtSecurityToken GenerateToken(List<Claim> authClaims)
         {
